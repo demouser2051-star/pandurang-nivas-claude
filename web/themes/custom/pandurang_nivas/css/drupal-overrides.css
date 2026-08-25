@@ -902,3 +902,492 @@ main table tr:last-child td {
   color: rgba(46, 45, 42, 0.55);
   text-align: center;
 }
+
+/* ===========================================================================
+   Responsive
+   ===========================================================================
+
+   main.css was written for a page with exactly one <nav>. Drupal wraps every
+   menu block in one, so its mobile rules have to be re-scoped before anything
+   else here makes sense.
+   ------------------------------------------------------------------------ */
+
+@media (max-width: 768px) {
+  /*
+   * The closed drawer sits 320px past the right edge, which widens the
+   * document and leaves the page scrollable sideways. `clip` removes that
+   * without creating a scroll container - `overflow-x: hidden` would, and
+   * that would break the sticky header.
+   */
+  body {
+    overflow-x: clip;
+  }
+
+  /*
+   * main.css turns `nav` into a fixed off-canvas drawer below this width.
+   * With Drupal that caught the footer menu and the menu block nested inside
+   * the primary navigation too, parking the whole Quick Links column 300px
+   * off the right edge of the screen. Everything is reset here, and the
+   * drawer is then given back to the primary navigation alone.
+   */
+  nav {
+    position: static;
+    right: auto;
+    width: auto;
+    height: auto;
+    padding: 0;
+    background: none;
+    box-shadow: none;
+    z-index: auto;
+  }
+
+  /*
+   * The drawer is anchored inside the viewport and slid out of sight, rather
+   * than parked at a negative offset. A fixed element sitting past the right
+   * edge still extends the scrollable area - the page could be dragged 320px
+   * sideways on every phone - and no ancestor overflow can clip it, because a
+   * fixed element's containing block is the viewport.
+   */
+  /*
+   * Closed, the drawer carries no transform at all: a fixed element shifted
+   * past the right edge - by a negative offset or by translateX - still
+   * extends the scrollable area, and the page could be dragged sideways by
+   * the drawer's width on every phone. Nothing can clip it either, since a
+   * fixed element's containing block is the viewport.
+   *
+   * So it sits at right: 0 and is simply invisible, and the slide is played
+   * as an animation while it is open, where it costs nothing.
+   */
+  #main-nav {
+    position: fixed;
+    top: 0;
+    right: 0;
+    z-index: 1000;
+    width: min(320px, 86vw);
+    height: 100vh;
+    padding: 84px 26px 26px;
+    overflow-y: auto;
+    visibility: hidden;
+    opacity: 0;
+    background: #fff;
+    box-shadow: -5px 0 22px rgba(0, 0, 0, 0.14);
+    transition:
+      opacity 0.2s ease,
+      visibility 0s linear 0.2s;
+  }
+
+  #main-nav.active {
+    visibility: visible;
+    opacity: 1;
+    animation: pn-drawer-in 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    transition:
+      opacity 0.2s ease,
+      visibility 0s;
+  }
+}
+
+@keyframes pn-drawer-in {
+  from {
+    transform: translateX(100%);
+  }
+
+  to {
+    transform: none;
+  }
+}
+
+@media (max-width: 768px) {
+
+  /* The block inside the drawer must not be positioned in its own right. */
+  #main-nav nav,
+  #main-nav .block {
+    position: static;
+    width: auto;
+    height: auto;
+    padding: 0;
+  }
+
+  #main-nav ul {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    width: 100%;
+  }
+
+  /* Stacked links read better left-aligned, with a comfortable tap target. */
+  #main-nav a {
+    flex-direction: row;
+    gap: 12px;
+    align-items: center;
+    justify-content: flex-start;
+    min-height: 48px;
+    padding: 10px 8px;
+    border-radius: 10px;
+  }
+
+  #main-nav a:hover,
+  #main-nav a.active {
+    background: var(--light);
+  }
+
+  #main-nav .nav-icon {
+    width: 22px;
+    text-align: center;
+  }
+
+  .mobile-menu-btn {
+    z-index: 1002;
+  }
+
+  /* The footer menu stays an ordinary list in the footer. */
+  #footer nav {
+    position: static;
+  }
+}
+
+/* Header --------------------------------------------------------------- */
+
+@media (max-width: 1100px) {
+  /* Long site names collide with the nav before the drawer kicks in. */
+  .header-content {
+    gap: 16px;
+  }
+
+  .logo-text .marathi {
+    font-size: 1.35rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .header-content {
+    gap: 10px;
+  }
+
+  .logo-icon img {
+    width: 42px;
+    height: 42px;
+  }
+
+  .logo-text .marathi {
+    font-size: 1.2rem;
+    white-space: nowrap;
+  }
+
+  .header-actions {
+    gap: 8px;
+    margin-inline-start: auto;
+  }
+
+  /* Keep the row from wrapping under the logo. */
+  .header-actions .user-avatar,
+  .header-actions .notification-button,
+  .header-actions .search-toggle-btn {
+    width: 38px;
+    height: 38px;
+  }
+
+  .header-actions .fa-3x {
+    font-size: 1.6rem;
+  }
+}
+
+@media (max-width: 520px) {
+  .logo-text .marathi {
+    font-size: 1.05rem;
+  }
+
+  /* The notification bell is the first thing that can go. */
+  .header-actions .notification-widget {
+    display: none;
+  }
+}
+
+/*
+ * Below this the header row genuinely runs out of room: logo, language pill,
+ * account button and the menu button together needed more than the viewport,
+ * pushing the menu button off the right edge. Everything tightens together.
+ */
+@media (max-width: 430px) {
+  .container {
+    padding-inline: 12px;
+  }
+
+  .header-content {
+    gap: 6px;
+  }
+
+  .logo {
+    gap: 8px;
+    min-width: 0;
+  }
+
+  /* The wrapper carries its own size, so the img alone is not enough. */
+  .logo-icon,
+  .logo-icon img {
+    width: 38px;
+    height: 38px;
+    min-width: 38px;
+  }
+
+  .logo-text {
+    min-width: 0;
+  }
+
+  .logo-text .marathi {
+    overflow: hidden;
+    font-size: 0.95rem;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  .header-actions {
+    flex: none;
+    gap: 6px;
+  }
+
+  .header-actions .user-avatar {
+    width: 34px;
+    height: 34px;
+  }
+
+  .header-actions .fa-3x {
+    font-size: 1.4rem;
+  }
+
+  /* "म / En" does not need 119px; the room goes to the site name. */
+  .language-switcher-language-url ul,
+  .block-language ul {
+    gap: 1px;
+    padding: 2px;
+  }
+
+  .language-switcher-language-url a,
+  .block-language a {
+    min-width: 0;
+    padding: 4px 7px;
+    font-size: 0.8rem;
+  }
+
+  .mobile-menu-btn {
+    flex: none;
+    padding: 0;
+    font-size: 1.3rem;
+  }
+}
+
+/* Page furniture -------------------------------------------------------- */
+
+@media (max-width: 768px) {
+  body:not(.path-frontpage) main#main-content {
+    padding: 28px 0 48px;
+  }
+
+  .section {
+    padding: 48px 0;
+  }
+
+  .section-title h2,
+  .section-title .marathi {
+    font-size: clamp(1.5rem, 7vw, 2.2rem);
+  }
+
+  .hero-slideshow {
+    min-height: 62vh;
+  }
+
+  .hero-content h1 {
+    font-size: clamp(1.8rem, 9vw, 3rem);
+  }
+
+  .hero-content p {
+    font-size: clamp(1rem, 4.5vw, 1.4rem);
+  }
+
+  .footer-content {
+    grid-template-columns: 1fr;
+    gap: 34px;
+  }
+}
+
+/* Wide content must scroll inside itself, never widen the page. */
+main#main-content table,
+.pn-report table {
+  display: block;
+  overflow-x: auto;
+  white-space: nowrap;
+}
+
+img,
+video {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Family tree ----------------------------------------------------------- */
+
+@media (max-width: 768px) {
+  /* Seven generations of indentation do not fit a phone; tighten the step
+     and let the long full names wrap instead of forcing a sideways scroll. */
+  .tree-node .tree-branch {
+    margin-inline-start: 10px;
+    padding-inline-start: 14px;
+  }
+
+  .tree-node .tree-branch > .tree-node::before {
+    inset-inline-start: -14px;
+    width: 10px;
+  }
+
+  .tree-node__card {
+    gap: 8px;
+    padding: 8px 10px;
+  }
+
+  .tree-node__body {
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .tree-node__name {
+    font-size: 0.95rem;
+    line-height: 1.35;
+  }
+
+  .tree-node__spouse {
+    font-size: 0.8rem;
+  }
+
+  .pn-tree__toolbar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+    padding: 14px;
+  }
+
+  .pn-tree__controls {
+    justify-content: space-between;
+  }
+
+  .pn-tree__count {
+    margin-inline-start: 0;
+    text-align: center;
+  }
+}
+
+@media (max-width: 420px) {
+  .tree-node__photo,
+  .tree-node__avatar {
+    width: 28px;
+    height: 28px;
+    font-size: 0.85rem;
+  }
+
+  .tree-node .tree-branch {
+    margin-inline-start: 6px;
+    padding-inline-start: 10px;
+  }
+}
+
+/* Calendar -------------------------------------------------------------- */
+
+@media (max-width: 768px) {
+  .calendar-section {
+    padding: 48px 0;
+  }
+
+  .calendar-container {
+    padding: 16px;
+  }
+
+  .calendar-grid,
+  .calendar-weekdays,
+  .calendar-dates {
+    gap: 3px;
+  }
+
+  .calendar-day {
+    padding: 8px 0;
+    font-size: 0.75rem;
+  }
+
+  .calendar-date {
+    padding: 10px 0;
+    font-size: 0.9rem;
+  }
+
+  .calendar-header h3 {
+    font-size: 1.15rem;
+  }
+
+  .calendar-legend {
+    gap: 12px;
+    font-size: 0.85rem;
+  }
+}
+
+@media (max-width: 400px) {
+  .calendar-day {
+    font-size: 0.65rem;
+  }
+
+  .calendar-date {
+    padding: 8px 0;
+    font-size: 0.82rem;
+  }
+}
+
+/* Cards, gallery and events --------------------------------------------- */
+
+@media (max-width: 768px) {
+  .view-content {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .gallery-grid {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 12px;
+  }
+
+  .gallery-tabs {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .event-actions,
+  .pn-rsvp {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  /* RSVP answers stay tappable rather than shrinking to fit one row. */
+  .event-btn {
+    flex: 1 1 auto;
+    min-height: 44px;
+  }
+
+  .pn-member__header {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .pn-member__relations {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Touch targets --------------------------------------------------------- */
+
+@media (pointer: coarse) {
+  .footer-links a,
+  .pager__item a,
+  .tasks a,
+  .gallery-tab,
+  .lang-btn,
+  .language-switcher-language-url a,
+  .block-language a {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+  }
+}

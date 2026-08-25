@@ -140,21 +140,32 @@ class HomeController extends ControllerBase {
   }
 
   /**
-   * The first two generations, as a taste of the full tree.
+   * The top of the tree, as a taste of the whole thing.
+   *
+   * Three generations: the register is rooted at धोंडोजीं, whose only child is
+   * पांडुरंग, so stopping at two would show just two names.
    */
   protected function treePreview(): array {
-    $tree = $this->treeBuilder->getTree();
+    return $this->trimTree($this->treeBuilder->getTree(), 3);
+  }
 
-    // Keep the root and their children, but drop everything below that.
-    foreach ($tree as &$root) {
-      foreach ($root['children'] as &$child) {
-        $child['children'] = [];
-      }
-      unset($child);
+  /**
+   * Returns a copy of a nested tree cut off below the given depth.
+   */
+  protected function trimTree(array $branch, int $depth): array {
+    if ($depth <= 1) {
+      return array_map(
+        fn(array $member) => ['children' => []] + $member,
+        $branch
+      );
     }
-    unset($root);
 
-    return $tree;
+    return array_map(function (array $member) use ($depth) {
+      $member['children'] = empty($member['children'])
+        ? []
+        : $this->trimTree($member['children'], $depth - 1);
+      return $member;
+    }, $branch);
   }
 
   /**

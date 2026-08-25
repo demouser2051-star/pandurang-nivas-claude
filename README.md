@@ -55,7 +55,7 @@ goes anywhere public.
 
 | Type | Holds | Notable fields |
 |---|---|---|
-| `family_member` | One person in the register (253 of them) | `field_fm_parent` (self-reference), `field_fm_spouse`, `field_fm_generation`, `field_fm_sex`, `field_fm_legacy_id` |
+| `family_member` | One person in the register (232 of them) | `field_fm_parent` (self-reference), `field_fm_spouse`, `field_fm_generation`, `field_fm_sex`, `field_fm_legacy_id` |
 | `event` | Festivals, gatherings, trips | `field_event_start` / `_end`, `field_event_location`, `field_event_time`, `field_event_rsvp` |
 | `gallery_item` | A photo or a video | `field_gi_type`, `field_gi_image`, `field_gi_album`, `field_gi_caption` |
 | `album` | A named collection | `field_album_cover` |
@@ -121,7 +121,7 @@ prefix: `/mr/…` and `/en/…`.
 
 **Family member names carry a transliterated English translation.** The source
 register holds only Devanagari, so `16-transliterate-member-names.php`
-generated a Latin-script name and spouse name for all 253 members. It uses
+generated a Latin-script name and spouse name for every member. It uses
 ICU's `Any-Latin` and then applies Marathi conventions on top: IAST diacritics
 become the usual digraphs (ś → sh, c → ch, jñ → dny), and the inherent final
 vowel is dropped, so महादेव is *Mahadev* rather than *Mahadeva*.
@@ -155,7 +155,7 @@ php vendor/bin/drush.php php:script scripts/01-language.php
 | `02-content-types.php` | The content types and their fields |
 | `02b-body-fields.php` | Body fields on event / album / notification |
 | `03-translation-displays-roles.php` | Content translation, form and view displays, roles |
-| `04-import-family-tree.php` | The 253 family members from `data/familyTreeData.json` |
+| `04-import-family-tree.php` | Superseded by 18 — the original 253-person JSON import |
 | `05-import-content.php` | Events, gallery, albums, notifications, pages |
 | `06-views.php` | The gallery and events views |
 | `07-menus-blocks-frontpage.php` | Menus, block placement, front page, aliases |
@@ -166,8 +166,9 @@ php vendor/bin/drush.php php:script scripts/01-language.php
 | `13-field-label-translations.php` | Marathi field labels |
 | `14-footer-menu.php` | The six footer quick links |
 | `15-fix-image-translatability.php` | Makes the image fields shared across languages |
-| `16-transliterate-member-names.php` | English names for all 253 members (`-- --dry` to preview) |
+| `16-transliterate-member-names.php` | English names for every member (`-- --dry` to preview) |
 | `17-events-calendar-block.php` | Places the event calendar on the events page |
+| `18-replace-family-tree.php` | Replaces the register from the 2022 spreadsheet (`-- --dry` to preview) |
 
 ### A note on translatable fields
 
@@ -185,19 +186,30 @@ timings — stays translatable.
 
 ## Things the family should know
 
-**Three gaps came across from the source register**, untouched rather than
-guessed at:
+**The register comes from `FAMILY TREE [MM] 21.10.2022.xlsx`** — 232 people
+across seven generations, rooted at धोंडोजीं लक्ष्मण चव्हाण. It replaced an
+earlier 253-person import that started a generation later, at पांडुरंग; that
+data is kept in `data/backups/` should anything need checking against it.
 
-1. **गौरंग** (`gen-5-6-3-1-1`) names a parent, `gen-4-6-3-1`, who has no entry
-   of their own. He shows as a second root in the tree. Adding that missing
-   person and setting them as his parent reconnects the branch.
-2. **Two people have no name recorded** (`gen-5-5-7-3-1`, `gen-6-1-1-3-1-2`).
-   They hold their place in the tree under a placeholder title.
-3. **`*(बहीण)` and स्वप्निल** are marked as having children, but no children
-   are listed for them.
+The spreadsheet is a drawn tree rather than a table: a cell's **column is its
+generation** and its parent is the nearest name up and to the left. Each cell
+reads `GIVEN FATHER SURNAME + SPOUSE`, and a married daughter carries her
+married surname in brackets — `रजनी (मोरे) व्यंकटेश चव्हाण`. Names are stored
+exactly as written, brackets included.
 
-Each affected member carries a note in their `Notes` field explaining what is
-missing.
+Three things are worth knowing about it:
+
+1. **Sex is only recorded implicitly.** A person listed with a wife is taken as
+   male, a bracketed married surname marks a daughter. That leaves **77 people
+   with no sex recorded** — mostly unmarried children — and the tree simply
+   does not colour-code them rather than guessing.
+2. **दिनकर पांडुरंग चव्हाण has two wives**, `तारामती + नवी`, kept in the one
+   spouse field as the sheet has it.
+3. **One entry is a description, not a name**: `आत्या` (paternal aunt) in
+   generation 3.
+
+To re-import after editing the spreadsheet, re-parse it with
+`scripts/lib-parse-family-tree-xlsx.php` and re-run `18-replace-family-tree.php`.
 
 **The event dates are the ones from the source content** — August 2025 through
 March 2024. They are all in the past now, so the front page falls back to
@@ -243,3 +255,37 @@ re-applied. If anything else used a per-database grant — the pre-existing
   should not be reachable by direct URL — right now the images sit under
   `sites/default/files/gallery/`, which is publicly readable even though the
   gallery *pages* are not.
+
+---
+
+## Responsive layout
+
+Verified with no sideways scrolling and no element overflow across
+360 / 414 / 768 / 1024 / 1280 / 1600 px, on the front page, family tree,
+gallery, events, member pages, standing pages and the login form.
+
+| Width | Layout |
+|---|---|
+| ≥ 769px | Full horizontal navigation |
+| ≤ 768px | Off-canvas drawer behind the hamburger; footer and cards stack |
+| ≤ 520px | Notification bell drops out of the header |
+| ≤ 430px | Header tightens: smaller logo, compact language pill |
+| ≤ 360px | Site name ellipsises rather than pushing the menu button off-screen |
+
+Two things in the ported CSS had to be corrected to make any of this work, and
+are worth knowing about if that stylesheet is edited again:
+
+**`nav` was styled as a singleton.** `main.css` turns *any* `<nav>` into a
+fixed off-canvas drawer below 768px. The static site had exactly one; Drupal
+wraps every menu block in one, so the rule also caught the footer menu and the
+block nested inside the primary navigation — the whole Quick Links column was
+being parked 300px off the right edge of every phone. The reset is scoped so
+only `#main-nav` becomes a drawer.
+
+**A closed drawer must not sit outside the viewport.** Parking it at
+`right: -320px`, or at `right: 0` with `transform: translateX(100%)`, still
+extends the scrollable area, and the page could be dragged sideways by the
+drawer's width. No ancestor `overflow` can clip it either, because a fixed
+element's containing block is the viewport. It therefore rests at `right: 0`
+with `visibility: hidden` and **no transform**, and the slide is played as an
+animation while it is open, where it costs nothing.

@@ -119,10 +119,24 @@ prefix: `/mr/…` and `/en/…`.
 - Config that shows Marathi text (view titles, menu links, field labels) is
   translated through the language override collection.
 
-**Family member names are Marathi only.** The source register holds only
-Devanagari names, and transliterating 253 real people's names would risk
-getting them wrong. English pages fall back to the Marathi name, which is the
-right behaviour for proper nouns and matches what the original site did.
+**Family member names carry a transliterated English translation.** The source
+register holds only Devanagari, so `16-transliterate-member-names.php`
+generated a Latin-script name and spouse name for all 253 members. It uses
+ICU's `Any-Latin` and then applies Marathi conventions on top: IAST diacritics
+become the usual digraphs (ś → sh, c → ch, jñ → dny), and the inherent final
+vowel is dropped, so महादेव is *Mahadev* rather than *Mahadeva*.
+
+Those spellings are a **starting point, not an authority**. Rule-based
+transliteration cannot settle internal schwa deletion, so confirmed spellings
+live in a `PN_KNOWN_SPELLINGS` table at the top of the script — matched one
+word at a time, so an entry there applies wherever that word appears. The
+family surname is in it (चव्हाण is *Chavan*, not the rule's *Chavhan*), along
+with *Dnyandev* and *Dinkar*.
+
+Corrections can go either place: add repeated names and surnames to that
+table, and edit one-offs in the admin UI. Re-running the script leaves
+hand-edited names alone; pass `-- --force` when the rules themselves change and
+the stored names are stale machine output rather than someone's edit.
 
 ---
 
@@ -152,6 +166,8 @@ php vendor/bin/drush.php php:script scripts/01-language.php
 | `13-field-label-translations.php` | Marathi field labels |
 | `14-footer-menu.php` | The six footer quick links |
 | `15-fix-image-translatability.php` | Makes the image fields shared across languages |
+| `16-transliterate-member-names.php` | English names for all 253 members (`-- --dry` to preview) |
+| `17-events-calendar-block.php` | Places the event calendar on the events page |
 
 ### A note on translatable fields
 

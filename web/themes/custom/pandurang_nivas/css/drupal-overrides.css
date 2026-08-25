@@ -425,6 +425,18 @@ input[type="search"] {
 
 /* Scroll-in animation ----------------------------------------------------- */
 
+/*
+ * Content is never hidden waiting for JavaScript.
+ *
+ * This previously set `opacity: 0` on anything without .is-visible and relied
+ * on an IntersectionObserver to add that class. When the observer did not fire
+ * the whole front page - about, family tree, gallery and events - stayed
+ * invisible with no way for a reader to recover.
+ *
+ * The fade now runs the other way round: everything is visible by default, and
+ * .is-visible merely replays a fade-and-rise as the section scrolls in. If the
+ * script never runs, the page simply appears without the flourish.
+ */
 .section,
 .event-card,
 .gallery-item {
@@ -432,17 +444,73 @@ input[type="search"] {
 }
 
 @media (prefers-reduced-motion: no-preference) {
-  .section:not(.is-visible),
-  .event-card:not(.is-visible),
-  .gallery-item:not(.is-visible) {
+  .section.is-visible,
+  .event-card.is-visible,
+  .gallery-item.is-visible {
+    animation: pn-rise-in 0.5s ease both;
+  }
+}
+
+/*
+ * main.css parks these three off to the side at opacity 0 and waits for a
+ * scroll handler to add .animate. That is the same trap as above, and it is
+ * what left the calendar and the event cards missing from the front page.
+ * Visible by default; the class only replays the slide.
+ */
+.calendar,
+.event-highlights,
+.about-content {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .about-content.is-visible {
+    animation: pn-rise-in 0.5s ease both;
+  }
+
+  .calendar.is-visible {
+    animation: pn-slide-in-start 0.5s ease both;
+  }
+
+  .event-highlights.is-visible {
+    animation: pn-slide-in-end 0.5s ease both;
+  }
+}
+
+@keyframes pn-rise-in {
+  from {
     opacity: 0;
     transform: translateY(18px);
   }
 
-  .section,
-  .event-card,
-  .gallery-item {
-    transition: opacity 0.5s ease, transform 0.5s ease;
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes pn-slide-in-start {
+  from {
+    opacity: 0;
+    transform: translateX(-50px);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes pn-slide-in-end {
+  from {
+    opacity: 0;
+    transform: translateX(50px);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
   }
 }
 
@@ -809,4 +877,28 @@ main table tr:last-child td {
     width: min(350px, calc(100vw - 32px));
     right: -8px;
   }
+}
+
+/* Calendar weekday row ---------------------------------------------------- */
+
+/*
+ * In the static markup the सोम…रवि labels were direct children of
+ * .calendar-grid, so they picked up its seven columns without needing a rule
+ * of their own. Here they sit in their own wrapper - the date cells are
+ * rendered into .calendar-grid by script, which would otherwise wipe them -
+ * so the wrapper has to repeat that grid.
+ */
+.calendar-weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.calendar-day {
+  padding: 8px 0;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: rgba(46, 45, 42, 0.55);
+  text-align: center;
 }

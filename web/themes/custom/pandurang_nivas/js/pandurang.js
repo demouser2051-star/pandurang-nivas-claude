@@ -207,20 +207,26 @@
   };
 
   /**
-   * Reveals sections as they scroll into view.
+   * Plays a fade-and-rise on sections as they scroll into view.
+   *
+   * Purely decorative: the stylesheet leaves everything visible, and this only
+   * adds the class that replays the animation. Nothing here can hide content.
    */
   Drupal.behaviors.pandurangAnimations = {
     attach(context) {
-      const targets = once('pn-animate', '.section, .event-card, .gallery-item', context);
-      if (!targets.length) {
+      // The last three carry the original stylesheet's slide-in; they are
+      // included so that animation still plays, not to make them visible.
+      const targets = once(
+        'pn-animate',
+        '.section, .event-card, .gallery-item, .calendar, .event-highlights, .about-content',
+        context
+      );
+      if (!targets.length || !('IntersectionObserver' in window)) {
         return;
       }
 
-      if (!('IntersectionObserver' in window)) {
-        targets.forEach((element) => element.classList.add('is-visible'));
-        return;
-      }
-
+      // A section taller than the viewport can never reach a percentage
+      // threshold, so trigger on any overlap at all.
       const observer = new IntersectionObserver((entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
@@ -228,7 +234,7 @@
             observer.unobserve(entry.target);
           }
         });
-      }, { threshold: 0.12 });
+      }, { threshold: 0, rootMargin: '0px 0px -10% 0px' });
 
       targets.forEach((element) => observer.observe(element));
     },

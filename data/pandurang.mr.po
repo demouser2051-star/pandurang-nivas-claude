@@ -283,3 +283,12 @@ msgstr "कुटुंबवृक्षाकडे परत"
 
 msgid "Sign in as a family member to respond."
 msgstr "उत्तर देण्यासाठी कुटुंब सदस्य म्हणून प्रवेश करा."
+
+msgid "Event Calendar"
+msgstr "कार्यक्रम दिनदर्शिका"
+
+msgid "Festivals"
+msgstr "सण"
+
+msgid "Today"
+msgstr "आज"

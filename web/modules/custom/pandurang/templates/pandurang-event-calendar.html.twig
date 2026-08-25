@@ -1,0 +1,57 @@
+{#
+/**
+ * @file
+ * The event calendar, matching the section the original events page carried.
+ *
+ * The date cells are filled in by events.js from drupalSettings; the weekday
+ * row is rendered here so the script can replace the dates without wiping it.
+ */
+#}
+<section class="section calendar-section">
+  <div class="container">
+    <div class="section-title">
+      <h2><span class="marathi marathi-font">{{ 'Event Calendar'|t }}</span></h2>
+    </div>
+
+    <div class="calendar-container" data-pn-calendar>
+      <div class="calendar-header">
+        <button class="calendar-nav-btn" type="button" data-pn-calendar-prev
+                aria-label="{{ 'Previous month'|t }}">
+          <i class="fas fa-chevron-left" aria-hidden="true"></i>
+        </button>
+
+        <h3 class="marathi-font" aria-live="polite"></h3>
+
+        <button class="calendar-nav-btn" type="button" data-pn-calendar-next
+                aria-label="{{ 'Next month'|t }}">
+          <i class="fas fa-chevron-right" aria-hidden="true"></i>
+        </button>
+      </div>
+
+      <div class="calendar-grid">
+        {% for day in ['Mon'|t, 'Tue'|t, 'Wed'|t, 'Thu'|t, 'Fri'|t, 'Sat'|t, 'Sun'|t] %}
+          <div class="calendar-day marathi-font">{{ day }}</div>
+        {% endfor %}
+      </div>
+
+      <div class="calendar-dates"></div>
+
+      <div class="calendar-legend">
+        <div class="legend-item">
+          <div class="legend-color event-dot"></div>
+          <span class="marathi-font">{{ 'Events'|t }}</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-color festival-dot"></div>
+          <span class="marathi-font">{{ 'Festivals'|t }}</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-color today-dot"></div>
+          <span class="marathi-font">{{ 'Today'|t }}</span>
+        </div>
+      </div>
+
+      <p class="calendar-selected marathi-font" data-pn-calendar-selected aria-live="polite"></p>
+    </div>
+  </div>
+</section>

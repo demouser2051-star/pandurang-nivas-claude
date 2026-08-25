@@ -37,6 +37,9 @@ function pandurang_theme($existing, $type, $theme, $path) {
     'pandurang_notifications' => [
       'variables' => ['items' => []],
     ],
+    'pandurang_event_calendar' => [
+      'variables' => [],
+    ],
     'pandurang_home' => [
       'variables' => [
         'hero' => [],

@@ -59,7 +59,9 @@ class HomeController extends ControllerBase {
           'pandurang/family-tree',
         ],
         'drupalSettings' => [
-          'pandurang' => ['eventDates' => $this->eventDates()],
+          'pandurang' => [
+            'eventDates' => \Drupal::service('pandurang.event_calendar')->getDatedEvents(),
+          ],
         ],
       ],
       '#cache' => [
@@ -176,48 +178,5 @@ class HomeController extends ControllerBase {
     return $executable->buildRenderable($display_id, []);
   }
 
-  /**
-   * Event dates for the calendar, as ISO strings.
-   */
-  protected function eventDates(): array {
-    $storage = $this->entityTypeManager()->getStorage('node');
-    $langcode = $this->languageManager()->getCurrentLanguage()->getId();
-
-    $nids = $storage->getQuery()
-      ->accessCheck(TRUE)
-      ->condition('type', 'event')
-      ->condition('status', NodeInterface::PUBLISHED)
-      ->exists('field_event_start')
-      ->execute();
-
-    $dates = [];
-    foreach ($storage->loadMultiple($nids) as $node) {
-      if ($node->hasTranslation($langcode)) {
-        $node = $node->getTranslation($langcode);
-      }
-
-      $start = $node->get('field_event_start')->value;
-      $end = $node->get('field_event_end')->isEmpty()
-        ? $start
-        : $node->get('field_event_end')->value;
-
-      // A multi-day festival should light up every day it runs.
-      $cursor = new \DateTimeImmutable($start);
-      $last = new \DateTimeImmutable($end);
-      $guard = 0;
-
-      while ($cursor <= $last && $guard < 60) {
-        $dates[] = [
-          'date' => $cursor->format('Y-m-d'),
-          'title' => $node->label(),
-          'url' => $node->toUrl()->toString(),
-        ];
-        $cursor = $cursor->modify('+1 day');
-        $guard++;
-      }
-    }
-
-    return $dates;
-  }
 
 }

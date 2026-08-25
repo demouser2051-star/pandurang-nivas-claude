@@ -292,3 +292,14 @@ msgstr "सण"
 
 msgid "Today"
 msgstr "आज"
+
+msgid "Happening now"
+msgstr "सध्या सुरू आहे"
+
+msgid "Tomorrow"
+msgstr "उद्या"
+
+msgid "In 1 day"
+msgid_plural "In @count days"
+msgstr[0] "१ दिवसात"
+msgstr[1] "@count दिवसांत"

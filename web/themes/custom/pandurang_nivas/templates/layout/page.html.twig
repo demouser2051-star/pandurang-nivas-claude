@@ -68,11 +68,19 @@
               </button>
               <div id="notifications" class="notification-dropdown">
                 {% for item in notifications %}
-                  <div class="notification-item">
-                    <div class="notification-title marathi-font">{{ item.title }}</div>
-                    <div class="notification-message marathi-font">{{ item.message }}</div>
+                  <a href="{{ item.url }}"
+                     class="notification-item notification-item--{{ item.kind|default('notice') }}{{ item.is_festival ? ' is-festival' : '' }}">
+                    <div class="notification-title marathi-font">
+                      {% if item.kind == 'event' %}
+                        <i class="fas fa-calendar-day" aria-hidden="true"></i>
+                      {% endif %}
+                      {{ item.title }}
+                    </div>
+                    {% if item.message %}
+                      <div class="notification-message marathi-font">{{ item.message }}</div>
+                    {% endif %}
                     <div class="notification-time marathi-font">{{ item.time }}</div>
-                  </div>
+                  </a>
                 {% endfor %}
               </div>
             </div>

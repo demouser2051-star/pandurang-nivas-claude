@@ -1391,3 +1391,40 @@ video {
     align-items: center;
   }
 }
+
+/* Notification dropdown --------------------------------------------------- */
+
+/* The rows are links now, so they must not pick up the browser's link blue. */
+.notification-dropdown .notification-item {
+  display: block;
+  color: inherit;
+  text-decoration: none;
+  transition: background 0.2s ease;
+}
+
+.notification-dropdown .notification-item:hover {
+  background: var(--light);
+}
+
+/* An upcoming event is marked apart from a plain announcement. */
+.notification-item--event {
+  border-inline-start: 3px solid var(--secondary);
+  padding-inline-start: 12px;
+}
+
+.notification-item--event.is-festival {
+  border-inline-start-color: var(--primary);
+}
+
+.notification-item--event .notification-title i {
+  margin-inline-end: 6px;
+  color: var(--secondary);
+}
+
+.notification-item--event.is-festival .notification-title i {
+  color: var(--primary);
+}
+
+.notification-item .notification-time {
+  font-weight: 500;
+}

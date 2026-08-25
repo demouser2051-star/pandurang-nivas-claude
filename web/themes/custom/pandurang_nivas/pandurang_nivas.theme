@@ -87,6 +87,10 @@ function pandurang_nivas_load_notifications(int $limit = 3): array {
   $storage = \Drupal::entityTypeManager()->getStorage('node');
   $langcode = \Drupal::languageManager()->getCurrentLanguage()->getId();
 
+  // Anything happening in the next month leads the list: a gathering this
+  // weekend matters more than an announcement from last month.
+  $items = pandurang_nivas_upcoming_notifications();
+
   $nids = $storage->getQuery()
     ->accessCheck(TRUE)
     ->condition('type', 'notification')
@@ -96,11 +100,10 @@ function pandurang_nivas_load_notifications(int $limit = 3): array {
     ->execute();
 
   if (!$nids) {
-    return [];
+    return $items;
   }
 
   $date_formatter = \Drupal::service('date.formatter');
-  $items = [];
 
   foreach ($storage->loadMultiple($nids) as $node) {
     if ($node->hasTranslation($langcode)) {
@@ -115,6 +118,51 @@ function pandurang_nivas_load_notifications(int $limit = 3): array {
         '@ago' => $date_formatter->formatTimeDiffSince($node->getCreatedTime(), ['granularity' => 1]),
       ]),
       'url' => $node->toUrl()->toString(),
+      'kind' => 'notice',
+    ];
+  }
+
+  return $items;
+}
+
+/**
+ * Turns the next month's events into notification rows.
+ *
+ * @param int $days
+ *   How far ahead to look. One month by default.
+ */
+function pandurang_nivas_upcoming_notifications(int $days = 30): array {
+  $events = \Drupal::service('pandurang.event_calendar')->getUpcoming($days);
+  $items = [];
+
+  foreach ($events as $event) {
+    // Location and timing together make the one useful line of detail.
+    $detail = array_filter([$event['location'], $event['timing']]);
+
+    if ($event['running']) {
+      $when = t('Happening now');
+    }
+    elseif ($event['days_away'] === 0) {
+      $when = t('Today');
+    }
+    elseif ($event['days_away'] === 1) {
+      $when = t('Tomorrow');
+    }
+    else {
+      $when = \Drupal::translation()->formatPlural(
+        $event['days_away'],
+        'In 1 day',
+        'In @count days'
+      );
+    }
+
+    $items[] = [
+      'title' => $event['title'],
+      'message' => implode(' · ', $detail),
+      'time' => $when,
+      'url' => $event['url'],
+      'kind' => 'event',
+      'is_festival' => $event['type'] === 'festival',
     ];
   }
 

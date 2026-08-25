@@ -1,0 +1,774 @@
+/**
+ * @file
+ * Bridges Drupal's markup to the original Pandurang Nivas stylesheet.
+ *
+ * main.css was written for hand-authored HTML. Everything here either maps a
+ * Drupal wrapper onto a class that stylesheet already knows, or styles the
+ * pieces Drupal adds that the static site never had (admin toolbar, node
+ * forms, pager, messages).
+ */
+
+/* Page canvas ------------------------------------------------------------- */
+
+/*
+ * main.css declares `background: linear-gradient(…)` and then a separate
+ * `background-image: url(…)` for the rangoli pattern, which replaces the
+ * gradient and leaves the body with no background colour at all. On a browser
+ * set to dark mode the dark canvas then shows straight through. Restoring an
+ * explicit colour, and pinning the page to a light scheme, keeps the intended
+ * cream palette everywhere.
+ */
+:root {
+  color-scheme: light;
+}
+
+body {
+  background-color: #fdf8f0;
+}
+
+body.english-mode {
+  background-color: #f0f5fd;
+}
+
+/* Hero slides ------------------------------------------------------------- */
+
+/*
+ * main.css points the slide backgrounds at /images/webpics/, which only
+ * existed in the flat static site. The same photos now live with the theme.
+ */
+.hero-slide:nth-child(1) {
+  background-image: url("../images/hero/hero-1.jpg");
+}
+
+.hero-slide:nth-child(2) {
+  background-image: url("../images/hero/hero-2.jpg");
+}
+
+.hero-slide:nth-child(3) {
+  background-image: url("../images/hero/hero-3.png");
+}
+
+.hero-slide:nth-child(4) {
+  background-image: url("../images/hero/hero-4.jpg");
+}
+
+/* Darken the photo a little further so the white hero text stays legible. */
+.hero-slide::before {
+  background:
+    linear-gradient(135deg, rgba(239, 124, 0, 0.35) 0%, rgba(227, 0, 15, 0.3) 100%),
+    linear-gradient(to bottom, rgba(46, 45, 42, 0.35), rgba(46, 45, 42, 0.5));
+}
+
+/* Language switcher ------------------------------------------------------- */
+
+.language-switcher-language-url,
+.block-language {
+  display: flex;
+  align-items: center;
+}
+
+.language-switcher-language-url ul,
+.block-language ul {
+  display: flex;
+  gap: 4px;
+  padding: 4px;
+  margin: 0;
+  list-style: none;
+  background: var(--light);
+  border-radius: 999px;
+}
+
+.language-switcher-language-url li,
+.block-language li {
+  margin: 0;
+}
+
+/* Matches .lang-btn from the original toggle. */
+.language-switcher-language-url a,
+.block-language a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 34px;
+  padding: 5px 12px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--dark);
+  text-decoration: none;
+  border-radius: 999px;
+  transition: var(--transition);
+}
+
+.language-switcher-language-url a:hover,
+.block-language a:hover {
+  background: var(--accent-light);
+}
+
+.language-switcher-language-url .is-active,
+.block-language .is-active,
+.language-switcher-language-url a.active,
+.block-language a.active {
+  color: #fff;
+  background: var(--primary);
+}
+
+/* Skip link --------------------------------------------------------------- */
+
+.skip-link {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  z-index: 5000;
+  padding: 10px 20px;
+  color: #fff;
+  background: var(--dark);
+  border-radius: 0 0 var(--border-radius) var(--border-radius);
+  transform: translateX(-50%);
+}
+
+.visually-hidden {
+  position: absolute !important;
+  overflow: hidden;
+  clip: rect(1px, 1px, 1px, 1px);
+  width: 1px;
+  height: 1px;
+  word-wrap: normal;
+}
+
+.visually-hidden.focusable:active,
+.visually-hidden.focusable:focus {
+  position: static !important;
+  overflow: visible;
+  clip: auto;
+  width: auto;
+  height: auto;
+}
+
+/* Main region ------------------------------------------------------------- */
+
+main#main-content {
+  display: block;
+  min-height: 40vh;
+}
+
+/* Give interior pages breathing room; the front page supplies its own. */
+body:not(.path-frontpage) main#main-content {
+  padding: 48px 0 72px;
+}
+
+/* Toolbar leaves a fixed bar at the top, so the sticky header sits below it. */
+body.toolbar-fixed #header {
+  top: 39px;
+}
+
+body.toolbar-fixed.toolbar-tray-open #header {
+  top: 79px;
+}
+
+/* Node pages -------------------------------------------------------------- */
+
+/*
+ * The main region wraps interior pages in .container, so these blocks no
+ * longer need to cap their own width or add their own side gutter. Listed one
+ * by one rather than as a blanket rule, so cards that genuinely want inner
+ * padding (the login form, the member card) keep it.
+ */
+main#main-content .node--view-mode-full,
+main#main-content .pn-tree,
+main#main-content > .container > table,
+main#main-content .messages {
+  max-width: none;
+  padding-inline: 0;
+  margin-inline: 0;
+}
+
+/* The tree keeps its breathing room at the bottom. */
+main#main-content .pn-tree {
+  padding-bottom: 60px;
+}
+
+.node--view-mode-full > .node__title,
+.page-title {
+  margin-bottom: 24px;
+  font-size: clamp(1.8rem, 4vw, 2.6rem);
+  color: var(--dark);
+}
+
+.node__content h2 {
+  margin: 28px 0 12px;
+  color: var(--primary);
+}
+
+.node__content p {
+  margin-bottom: 16px;
+}
+
+.node__content img {
+  max-width: 100%;
+  height: auto;
+  border-radius: var(--border-radius);
+}
+
+/* Field labels rendered inline. */
+.field--label-inline .field__label,
+.field--label-inline .field__item {
+  display: inline;
+}
+
+.field--label-inline .field__label::after {
+  content: ":\00a0";
+}
+
+.field {
+  margin-bottom: 10px;
+}
+
+/* Event and gallery cards ------------------------------------------------- */
+
+/*
+ * Titles are links now, where the static site had plain headings. They should
+ * inherit the heading's colour instead of the browser's link blue.
+ */
+.event-header h3 a,
+.gallery-overlay h4 a,
+.event-card .event-header h3 a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.event-header h3 a:hover,
+.gallery-overlay h4 a:hover {
+  text-decoration: underline;
+}
+
+/* The RSVP row sits at the foot of the card. */
+.event-card .event-body {
+  display: flex;
+  flex-direction: column;
+}
+
+.event-card .pn-rsvp {
+  margin-top: auto;
+}
+
+/* Views listings ---------------------------------------------------------- */
+
+.view-content {
+  display: grid;
+  gap: 26px;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+}
+
+.view-empty {
+  padding: 40px;
+  text-align: center;
+  color: rgba(46, 45, 42, 0.65);
+}
+
+/* Views exposed filters, styled like the rest of the chrome. */
+.views-exposed-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: flex-end;
+  margin-bottom: 30px;
+  padding: 18px 22px;
+  background: rgba(255, 255, 255, 0.85);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow);
+}
+
+/* Pager ------------------------------------------------------------------- */
+
+.pager__items {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  margin: 40px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.pager__item a {
+  display: inline-block;
+  padding: 8px 15px;
+  color: var(--dark);
+  text-decoration: none;
+  background: #fff;
+  border: 1px solid rgba(46, 45, 42, 0.12);
+  border-radius: 999px;
+  transition: var(--transition);
+}
+
+.pager__item a:hover,
+.pager__item.is-active a {
+  color: #fff;
+  background: var(--primary);
+  border-color: var(--primary);
+}
+
+/* Forms ------------------------------------------------------------------- */
+
+.pn-form-page {
+  max-width: 460px;
+  margin: 0 auto;
+  padding: 38px 34px;
+  background: #fff;
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow);
+}
+
+.pn-form-page .form-item {
+  margin-bottom: 18px;
+}
+
+.pn-form-page label,
+.form-item label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 500;
+}
+
+.form-text,
+.form-email,
+.form-password,
+.form-textarea,
+.form-select,
+input[type="search"] {
+  width: 100%;
+  padding: 11px 15px;
+  font: inherit;
+  color: var(--dark);
+  background: #fff;
+  border: 2px solid rgba(46, 45, 42, 0.12);
+  border-radius: 8px;
+  transition: border-color 0.25s ease;
+}
+
+.form-text:focus,
+.form-email:focus,
+.form-password:focus,
+.form-textarea:focus,
+.form-select:focus {
+  outline: none;
+  border-color: var(--secondary);
+}
+
+.button,
+.form-submit {
+  padding: 12px 28px;
+  font: inherit;
+  font-weight: 500;
+  color: #fff;
+  cursor: pointer;
+  background: linear-gradient(135deg, var(--secondary), var(--primary));
+  border: none;
+  border-radius: 999px;
+  transition: var(--transition);
+}
+
+.button:hover,
+.form-submit:hover {
+  box-shadow: 0 8px 20px rgba(227, 0, 15, 0.25);
+  transform: translateY(-2px);
+}
+
+.description {
+  margin-top: 5px;
+  font-size: 0.85rem;
+  color: rgba(46, 45, 42, 0.6);
+}
+
+/* Messages ---------------------------------------------------------------- */
+
+.messages {
+  max-width: 1200px;
+  margin: 0 auto 24px;
+  padding: 14px 20px;
+  border-radius: var(--border-radius);
+  border-inline-start: 5px solid;
+}
+
+.messages--status {
+  background: #eaf7ea;
+  border-color: #3d8b3d;
+}
+
+.messages--warning {
+  background: #fff8e5;
+  border-color: var(--secondary);
+}
+
+.messages--error {
+  background: var(--accent-red);
+  border-color: var(--primary);
+}
+
+/* Search dropdown results ------------------------------------------------- */
+
+.search-result-item {
+  display: block;
+  padding: 10px 14px;
+  color: var(--dark);
+  text-decoration: none;
+  border-bottom: 1px solid rgba(46, 45, 42, 0.07);
+}
+
+.search-result-item:last-child {
+  border-bottom: none;
+}
+
+.search-result-item:hover {
+  background: var(--light);
+}
+
+/* Scroll-in animation ----------------------------------------------------- */
+
+.section,
+.event-card,
+.gallery-item {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .section:not(.is-visible),
+  .event-card:not(.is-visible),
+  .gallery-item:not(.is-visible) {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+
+  .section,
+  .event-card,
+  .gallery-item {
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+}
+
+/* Login button as a link -------------------------------------------------- */
+
+a.login-btn {
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+}
+
+/* The account dropdown trigger is a button now, not a div. */
+button.user-avatar {
+  padding: 0;
+  color: var(--dark);
+  cursor: pointer;
+  background: none;
+  border: none;
+}
+
+/* Narrow screens ---------------------------------------------------------- */
+
+@media (max-width: 992px) {
+  .view-content {
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  }
+}
+
+@media (max-width: 600px) {
+  .node--view-mode-full {
+    padding: 0 14px;
+  }
+
+  .pn-form-page {
+    padding: 26px 20px;
+  }
+}
+
+/* Family member page ------------------------------------------------------ */
+
+.pn-member {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 34px 30px 40px;
+  background: #fff;
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow);
+}
+
+.pn-member__header {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 22px;
+  align-items: center;
+  padding-bottom: 24px;
+  margin-bottom: 24px;
+  border-bottom: 2px solid var(--light);
+}
+
+.pn-member__photo img,
+.pn-member__avatar {
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.pn-member__avatar {
+  display: grid;
+  place-items: center;
+  font-size: 2.4rem;
+  font-weight: 600;
+  color: #fff;
+}
+
+.pn-member__avatar--male {
+  background: linear-gradient(135deg, var(--secondary), #d96a00);
+}
+
+.pn-member__avatar--female {
+  background: linear-gradient(135deg, var(--primary), #a3000b);
+}
+
+.pn-member__name {
+  margin: 0 0 6px;
+  font-size: clamp(1.6rem, 3.5vw, 2.2rem);
+  color: var(--dark);
+}
+
+.pn-member__spouse,
+.pn-member__generation {
+  margin: 0;
+  color: rgba(46, 45, 42, 0.65);
+}
+
+.pn-member__relations {
+  display: grid;
+  gap: 26px;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+}
+
+.pn-member__group h2 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 10px;
+  font-size: 1.05rem;
+  color: var(--primary);
+}
+
+.pn-member__count {
+  padding: 1px 9px;
+  font-size: 0.78rem;
+  color: var(--dark);
+  background: var(--light);
+  border-radius: 999px;
+}
+
+.pn-member__list {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.pn-member__list li {
+  padding: 7px 0;
+  border-bottom: 1px solid rgba(46, 45, 42, 0.07);
+}
+
+.pn-member__list a {
+  font-weight: 500;
+  color: var(--dark);
+  text-decoration: none;
+}
+
+.pn-member__list a:hover {
+  color: var(--primary);
+  text-decoration: underline;
+}
+
+.pn-member__child-spouse {
+  font-size: 0.86rem;
+  color: rgba(46, 45, 42, 0.55);
+}
+
+.pn-member__notes {
+  padding: 16px 18px;
+  margin-top: 26px;
+  background: #fff8e5;
+  border-inline-start: 4px solid var(--secondary);
+  border-radius: 8px;
+}
+
+.pn-member__notes h2 {
+  margin: 0 0 6px;
+  font-size: 1rem;
+  color: var(--secondary);
+}
+
+.pn-member__back {
+  margin-top: 30px;
+  text-align: center;
+}
+
+@media (max-width: 600px) {
+  .pn-member {
+    padding: 24px 18px 30px;
+  }
+
+  .pn-member__header {
+    justify-content: center;
+    text-align: center;
+  }
+}
+
+/* Local tasks ------------------------------------------------------------- */
+
+.block-local-tasks-block ul,
+ul.tasks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  max-width: 1200px;
+  padding: 0;
+  margin: 0 auto 22px;
+  list-style: none;
+}
+
+.block-local-tasks-block li,
+ul.tasks li {
+  margin: 0;
+}
+
+.block-local-tasks-block a,
+ul.tasks a {
+  display: inline-block;
+  padding: 7px 16px;
+  font-size: 0.9rem;
+  color: var(--dark);
+  text-decoration: none;
+  background: #fff;
+  border: 1px solid rgba(46, 45, 42, 0.12);
+  border-radius: 999px;
+  transition: var(--transition);
+}
+
+.block-local-tasks-block a:hover,
+ul.tasks a:hover {
+  color: #fff;
+  background: var(--secondary);
+  border-color: var(--secondary);
+}
+
+.block-local-tasks-block a.is-active,
+ul.tasks a.is-active {
+  color: #fff;
+  background: var(--primary);
+  border-color: var(--primary);
+}
+
+/* Admin tables ------------------------------------------------------------ */
+
+.pn-report table,
+main table {
+  width: 100%;
+  margin: 0 0 24px;
+  background: #fff;
+  border-collapse: collapse;
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+
+main table th {
+  padding: 12px 16px;
+  color: #fff;
+  text-align: start;
+  background: linear-gradient(135deg, var(--secondary), var(--primary));
+}
+
+main table td {
+  padding: 11px 16px;
+  border-bottom: 1px solid rgba(46, 45, 42, 0.07);
+}
+
+main table tr:last-child td {
+  border-bottom: none;
+}
+
+/* Footer quick links ------------------------------------------------------ */
+
+/*
+ * main.css styles the header navigation with `nav ul { display: flex }`. In the
+ * static site the footer lists were bare <ul>s, but Drupal wraps every menu
+ * block in a <nav>, so that rule reached the footer too and strung the links
+ * out in a row. Put the footer list back to a normal block list.
+ */
+#footer nav ul {
+  display: block;
+  gap: 0;
+}
+
+/*
+ * The splitting has moved onto the list itself, so this wrapper must stop
+ * being a two-track grid - otherwise the menu block lands in the first track
+ * and the list only gets half the column's width.
+ */
+.footer-links-columns {
+  display: block;
+}
+
+/* Two columns, filled top-to-bottom, the way the original footer read. */
+.footer-links--split {
+  columns: 2;
+  column-gap: 30px;
+}
+
+.footer-links--split li {
+  /* Keep a link from being split across the column break. */
+  break-inside: avoid;
+  page-break-inside: avoid;
+}
+
+/*
+ * `nav a` in main.css stacks the icon above the label - that is the header
+ * navigation's look. The footer links are inside a <nav> too now, so the
+ * direction and centring have to be put back to a plain inline row.
+ */
+#footer .footer-links a {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 12px;
+  padding: 0;
+}
+
+#footer .footer-links a i {
+  flex: none;
+  margin-right: 0;
+}
+
+@media (max-width: 480px) {
+  .footer-links--split {
+    columns: 1;
+  }
+}
+
+/* Copyright line ---------------------------------------------------------- */
+
+.copyright a {
+  color: #ccc;
+  text-decoration: none;
+  border-bottom: 1px solid rgba(204, 204, 204, 0.35);
+  transition: var(--transition);
+}
+
+.copyright a:hover {
+  color: var(--primary);
+  border-bottom-color: var(--primary);
+}
+
+.copyright p {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 14px;
+  align-items: center;
+  justify-content: center;
+}

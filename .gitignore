@@ -1,0 +1,88 @@
+# Pandurang Nivas — Drupal 10 on MySQL
+#
+# What is tracked: the custom module and theme, the setup scripts, the import
+# sources under data/, and composer.json + composer.lock. Everything Composer
+# installs, everything Drupal generates, and anything holding credentials is
+# left out. `composer install` plus the scripts in scripts/ rebuild the rest.
+
+# ---------------------------------------------------------------------------
+# Composer-managed code
+# ---------------------------------------------------------------------------
+/vendor/
+
+# Drupal core and contributed projects are placed here by Composer; the paths
+# come from the "installer-paths" section of composer.json.
+/web/core/
+/web/libraries/
+/web/modules/contrib/
+/web/themes/contrib/
+/web/profiles/contrib/
+
+# Our own code is NOT ignored — spelled out so a broader rule never hides it.
+!/web/modules/custom/
+!/web/themes/custom/
+
+# ---------------------------------------------------------------------------
+# Credentials and per-environment configuration
+# ---------------------------------------------------------------------------
+# settings.php carries the database user and password.
+/web/sites/*/settings.php
+/web/sites/*/settings.local.php
+/web/sites/*/services.yml
+/web/sites/*/services.local.yml
+
+# The shipped templates stay, so a fresh checkout can be installed.
+!/web/sites/default/default.settings.php
+!/web/sites/default/default.services.yml
+
+.env
+.env.local
+
+# ---------------------------------------------------------------------------
+# Generated and uploaded files
+# ---------------------------------------------------------------------------
+# Uploaded media, aggregated CSS/JS, the Twig cache, compiled translations and
+# the config sync directory all live here. The gallery images under
+# files/gallery/ are copies of data/images/, which is tracked, so re-running
+# scripts/05-import-content.php puts them back.
+/web/sites/*/files/
+/web/sites/*/private/
+/web/sites/simpletest/
+
+# Apache logs from the local vhost.
+/logs/
+
+# ---------------------------------------------------------------------------
+# Local tooling
+# ---------------------------------------------------------------------------
+/node_modules/
+/.sass-cache/
+*.log
+
+# Claude Code: share the launch config, keep personal settings out.
+.claude/settings.local.json
+
+# ---------------------------------------------------------------------------
+# Editors and operating systems
+# ---------------------------------------------------------------------------
+.idea/
+.vscode/
+*.sublime-project
+*.sublime-workspace
+*.swp
+*~
+
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# ---------------------------------------------------------------------------
+# Backups and scratch files
+# ---------------------------------------------------------------------------
+*.bak
+*.bak-*
+*.orig
+*.rej
+*.sql
+*.sql.gz
+/backups/

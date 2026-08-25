@@ -1,0 +1,87 @@
+<?php
+
+/**
+ * @file
+ * Install and schema hooks for the Pandurang Nivas module.
+ */
+
+/**
+ * Implements hook_schema().
+ */
+function pandurang_schema() {
+  $schema['pn_event_rsvp'] = [
+    'description' => 'One response per family member per event.',
+    'fields' => [
+      'id' => [
+        'type' => 'serial',
+        'not null' => TRUE,
+        'description' => 'Primary key.',
+      ],
+      'nid' => [
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'description' => 'The event node ID.',
+      ],
+      'uid' => [
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'description' => 'The responding user ID.',
+      ],
+      'status' => [
+        'type' => 'varchar',
+        'length' => 16,
+        'not null' => TRUE,
+        'description' => 'One of going, maybe, not_going.',
+      ],
+      'guests' => [
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+        'description' => 'Additional people the member is bringing.',
+      ],
+      'note' => [
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => FALSE,
+        'description' => 'Optional short message from the member.',
+      ],
+      'created' => [
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+        'description' => 'When the response was first given.',
+      ],
+      'changed' => [
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+        'description' => 'When the response was last updated.',
+      ],
+    ],
+    'primary key' => ['id'],
+    'unique keys' => [
+      'pn_rsvp_node_user' => ['nid', 'uid'],
+    ],
+    'indexes' => [
+      'pn_rsvp_node_status' => ['nid', 'status'],
+      'pn_rsvp_user' => ['uid'],
+    ],
+  ];
+
+  return $schema;
+}
+
+/**
+ * Implements hook_install().
+ */
+function pandurang_install() {
+  // Anonymous visitors must never reach the family-only sections.
+  $anonymous = \Drupal\user\Entity\Role::load('anonymous');
+  if ($anonymous && $anonymous->hasPermission('view pn private content')) {
+    $anonymous->revokePermission('view pn private content');
+    $anonymous->save();
+  }
+}

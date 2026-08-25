@@ -1,0 +1,182 @@
+<?php
+
+/**
+ * @file
+ * Family platform behaviour for Pandurang Nivas.
+ */
+
+use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Session\AccountInterface;
+use Drupal\node\NodeInterface;
+
+/**
+ * Content types only relatives may read.
+ */
+const PANDURANG_PRIVATE_BUNDLES = ['family_member', 'gallery_item', 'album'];
+
+/**
+ * Implements hook_theme().
+ */
+function pandurang_theme($existing, $type, $theme, $path) {
+  return [
+    'pandurang_family_tree' => [
+      'variables' => ['tree' => []],
+    ],
+    'pandurang_tree_node' => [
+      'variables' => ['member' => NULL, 'depth' => 0],
+    ],
+    'pandurang_rsvp' => [
+      'variables' => [
+        'nid' => NULL,
+        'current' => NULL,
+        'counts' => [],
+        'may_respond' => FALSE,
+      ],
+    ],
+    'pandurang_notifications' => [
+      'variables' => ['items' => []],
+    ],
+    'pandurang_home' => [
+      'variables' => [
+        'hero' => [],
+        'about' => NULL,
+        'tree_preview' => NULL,
+        'gallery' => NULL,
+        'events' => NULL,
+        'is_member' => FALSE,
+      ],
+    ],
+  ];
+}
+
+/**
+ * Implements hook_node_access().
+ *
+ * Keeps the family-only content types away from people who are not relatives.
+ */
+function pandurang_node_access(NodeInterface $node, $op, AccountInterface $account) {
+  if ($op !== 'view' || !in_array($node->bundle(), PANDURANG_PRIVATE_BUNDLES, TRUE)) {
+    return AccessResult::neutral();
+  }
+
+  // Access hook results are OR-ed together, so returning "neutral" here would
+  // let core's plain "access content" permission grant the view anyway. Only
+  // an explicit forbid keeps these nodes away from non-relatives.
+  return AccessResult::forbiddenIf(!$account->hasPermission('view pn private content'))
+    ->addCacheContexts(['user.permissions']);
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_view() for nodes.
+ *
+ * Attaches the RSVP widget to events that collect responses.
+ */
+function pandurang_node_view(array &$build, NodeInterface $node, $display, $view_mode) {
+  // The event cards in listings carry the buttons too, as they did on the
+  // original site.
+  if ($node->bundle() !== 'event' || !in_array($view_mode, ['full', 'teaser'], TRUE)) {
+    return;
+  }
+  if ($node->get('field_event_rsvp')->isEmpty() || !$node->get('field_event_rsvp')->value) {
+    return;
+  }
+
+  /** @var \Drupal\pandurang\Service\RsvpManager $rsvp */
+  $rsvp = \Drupal::service('pandurang.rsvp');
+  $account = \Drupal::currentUser();
+  $current = $account->isAuthenticated()
+    ? $rsvp->getResponse((int) $node->id(), (int) $account->id())
+    : NULL;
+
+  $build['pandurang_rsvp'] = [
+    '#theme' => 'pandurang_rsvp',
+    '#nid' => (int) $node->id(),
+    '#current' => $current['status'] ?? NULL,
+    '#counts' => $rsvp->getCounts((int) $node->id()),
+    '#may_respond' => $rsvp->currentUserMayRespond(),
+    '#weight' => 50,
+    '#attached' => ['library' => ['pandurang/rsvp']],
+    '#cache' => [
+      'tags' => ['pn_rsvp:' . $node->id()],
+      'contexts' => ['user'],
+    ],
+  ];
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_insert() for nodes.
+ */
+function pandurang_node_insert(EntityInterface $node) {
+  pandurang_invalidate_tree($node);
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_update() for nodes.
+ */
+function pandurang_node_update(EntityInterface $node) {
+  pandurang_invalidate_tree($node);
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_delete() for nodes.
+ */
+function pandurang_node_delete(EntityInterface $node) {
+  pandurang_invalidate_tree($node);
+
+  // A removed event should not leave orphan responses behind.
+  if ($node->bundle() === 'event') {
+    \Drupal::database()->delete('pn_event_rsvp')
+      ->condition('nid', $node->id())
+      ->execute();
+  }
+}
+
+/**
+ * Implements hook_user_cancel().
+ */
+function pandurang_user_cancel($edit, $account, $method) {
+  \Drupal::database()->delete('pn_event_rsvp')
+    ->condition('uid', $account->id())
+    ->execute();
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_delete() for users.
+ */
+function pandurang_user_delete(EntityInterface $account) {
+  \Drupal::database()->delete('pn_event_rsvp')
+    ->condition('uid', $account->id())
+    ->execute();
+}
+
+/**
+ * Drops the cached family tree whenever a member changes.
+ */
+function pandurang_invalidate_tree(EntityInterface $node): void {
+  if ($node->bundle() === 'family_member') {
+    \Drupal::service('pandurang.family_tree')->invalidate();
+  }
+}
+
+/**
+ * Implements hook_preprocess_HOOK() for the family tree.
+ */
+function pandurang_preprocess_pandurang_family_tree(array &$variables) {
+  $variables['#attached']['library'][] = 'pandurang/family-tree';
+  $variables['member_count'] = pandurang_count_members($variables['tree']);
+}
+
+/**
+ * Counts every person in a nested tree.
+ */
+function pandurang_count_members(array $branch): int {
+  $total = 0;
+  foreach ($branch as $member) {
+    $total++;
+    if (!empty($member['children'])) {
+      $total += pandurang_count_members($member['children']);
+    }
+  }
+  return $total;
+}

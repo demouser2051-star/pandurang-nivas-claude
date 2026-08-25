@@ -1,0 +1,5 @@
+pandurang.rsvp_report:
+  route_name: pandurang.rsvp_report
+  base_route: entity.node.canonical
+  title: 'Responses'
+  weight: 20

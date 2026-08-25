@@ -1,0 +1,82 @@
+{#
+/**
+ * @file
+ * A single person in the family register.
+ *
+ * Available extra variables (see pandurang_nivas_preprocess_node):
+ * - member_children: the people whose parent this is.
+ * - member_parent: the parent, when there is one.
+ * - member_generation: which generation they belong to.
+ */
+#}
+<article{{ attributes.addClass('pn-member') }}>
+
+  <header class="pn-member__header">
+    {% if content.field_fm_photo|render %}
+      <div class="pn-member__photo">{{ content.field_fm_photo }}</div>
+    {% else %}
+      <div class="pn-member__avatar pn-member__avatar--{{ node.field_fm_sex.value|default('male') }}"
+           aria-hidden="true">{{ label|render|striptags|trim|slice(0, 1) }}</div>
+    {% endif %}
+
+    <div class="pn-member__identity">
+      <h1 class="pn-member__name marathi-font">{{ label }}</h1>
+
+      {% if node.field_fm_spouse.value %}
+        <p class="pn-member__spouse marathi-font">
+          {{ 'Spouse'|t }}: {{ node.field_fm_spouse.value }}
+        </p>
+      {% endif %}
+
+      {% if member_generation %}
+        <p class="pn-member__generation marathi-font">
+          {{ 'Generation @n'|t({'@n': member_generation}) }}
+        </p>
+      {% endif %}
+    </div>
+  </header>
+
+  <div class="pn-member__relations">
+    {% if member_parent %}
+      <section class="pn-member__group">
+        <h2 class="marathi-font">{{ 'Parent'|t }}</h2>
+        <ul class="pn-member__list">
+          <li><a class="marathi-font" href="{{ member_parent.url }}">{{ member_parent.name }}</a></li>
+        </ul>
+      </section>
+    {% endif %}
+
+    {% if member_children %}
+      <section class="pn-member__group">
+        <h2 class="marathi-font">
+          {{ 'Children'|t }} <span class="pn-member__count">{{ member_children|length }}</span>
+        </h2>
+        <ul class="pn-member__list">
+          {% for child in member_children %}
+            <li>
+              <a class="marathi-font" href="{{ child.url }}">{{ child.name }}</a>
+              {% if child.spouse %}
+                <span class="pn-member__child-spouse marathi-font">+ {{ child.spouse }}</span>
+              {% endif %}
+            </li>
+          {% endfor %}
+        </ul>
+      </section>
+    {% endif %}
+  </div>
+
+  {% if content.field_fm_notes|render %}
+    <section class="pn-member__notes">
+      <h2 class="marathi-font">{{ 'Notes'|t }}</h2>
+      {{ content.field_fm_notes }}
+    </section>
+  {% endif %}
+
+  <p class="pn-member__back">
+    <a class="cta-button marathi-font" href="{{ path('pandurang.family_tree_page') }}">
+      <i class="fas fa-angle-left" aria-hidden="true"></i>
+      {{ 'Back to the family tree'|t }}
+    </a>
+  </p>
+
+</article>

@@ -1,0 +1,16 @@
+view pn private content:
+  title: 'View family-only content'
+  description: 'See the family tree, gallery and other sections reserved for relatives.'
+
+rsvp to events:
+  title: 'RSVP to family events'
+  description: 'Answer Going / Maybe / Not going on an event.'
+
+view pn rsvp report:
+  title: 'View RSVP responses'
+  description: 'See who has responded to each event.'
+  restrict access: true
+
+administer pandurang settings:
+  title: 'Administer Pandurang Nivas settings'
+  restrict access: true

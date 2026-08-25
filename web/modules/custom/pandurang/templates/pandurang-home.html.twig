@@ -1,0 +1,161 @@
+{#
+/**
+ * @file
+ * The front page: hero, about, tree preview, gallery and events.
+ *
+ * Class names follow the original static site so main.css styles it unchanged.
+ */
+#}
+<section class="hero-slideshow" id="home">
+  {% for slide in hero %}
+    <div class="hero-slide{{ loop.first ? ' active' : '' }}">
+      <div class="container">
+        <div class="hero-content">
+          <h1 class="marathi-font">{{ slide.title }}</h1>
+          <p class="marathi-font">{{ slide.subtitle }}</p>
+          <a class="cta-button marathi-font" href="{{ slide.url }}">{{ slide.cta }}</a>
+        </div>
+      </div>
+    </div>
+  {% endfor %}
+
+  <button class="slide-nav-btn prev-slide" type="button" aria-label="{{ 'Previous slide'|t }}">
+    <i class="fas fa-chevron-left" aria-hidden="true"></i>
+  </button>
+  <button class="slide-nav-btn next-slide" type="button" aria-label="{{ 'Next slide'|t }}">
+    <i class="fas fa-chevron-right" aria-hidden="true"></i>
+  </button>
+
+  <div class="slideshow-nav">
+    {% for slide in hero %}
+      <button class="slide-dot{{ loop.first ? ' active' : '' }}" type="button"
+              data-slide="{{ loop.index0 }}"
+              aria-label="{{ 'Slide @n'|t({'@n': loop.index}) }}"></button>
+    {% endfor %}
+  </div>
+</section>
+
+{% if about %}
+  <section class="section" id="about">
+    <div class="container">
+      <div class="section-title">
+        <h2><span class="marathi marathi-font">{{ about.title }}</span></h2>
+      </div>
+
+      <div class="about-content">
+        <div class="about-text">{{ about.body }}</div>
+      </div>
+
+      <div class="section-button">
+        <a class="cta-button marathi-font" href="{{ about.url }}">
+          <span>{{ 'More'|t }}</span>
+          <i class="fas fa-angle-right" aria-hidden="true"></i>
+        </a>
+      </div>
+    </div>
+  </section>
+{% endif %}
+
+{% if tree_preview %}
+  <div class="rangoli-divider"><div class="rangoli"></div></div>
+
+  <section class="section private" id="family-tree">
+    <div class="container">
+      <div class="section-title">
+        <h2><span class="marathi marathi-font">{{ 'Family Tree'|t }}</span></h2>
+      </div>
+
+      <div class="pn-tree pn-tree--preview">
+        <ul class="tree-branch tree-branch--root">
+          {% for member in tree_preview %}
+            {% include '@pandurang/pandurang-tree-node.html.twig' with {
+              'member': member,
+              'depth': 0,
+            } only %}
+          {% endfor %}
+        </ul>
+      </div>
+
+      <div class="section-button">
+        <a class="cta-button marathi-font" href="{{ path('pandurang.family_tree_page') }}">
+          <span>{{ 'View the full tree'|t }}</span>
+          <i class="fas fa-angle-right" aria-hidden="true"></i>
+        </a>
+      </div>
+    </div>
+  </section>
+{% endif %}
+
+{% if gallery %}
+  <div class="rangoli-divider"><div class="rangoli"></div></div>
+
+  <section class="section private" id="gallery">
+    <div class="container">
+      <div class="section-title">
+        <h2><span class="marathi marathi-font">{{ 'Family Gallery'|t }}</span></h2>
+      </div>
+
+      <div class="gallery-tabs">
+        <button class="gallery-tab active marathi-font" type="button" data-type="all">{{ 'All'|t }}</button>
+        <button class="gallery-tab marathi-font" type="button" data-type="image">{{ 'Photos'|t }}</button>
+        <button class="gallery-tab marathi-font" type="button" data-type="video">{{ 'Videos'|t }}</button>
+      </div>
+
+      {{ gallery }}
+
+      <div class="section-button">
+        <a class="cta-button marathi-font" href="{{ url('view.pn_gallery.page_1') }}">
+          <span>{{ 'All'|t }}</span>
+          <i class="fas fa-angle-right" aria-hidden="true"></i>
+        </a>
+      </div>
+    </div>
+  </section>
+{% endif %}
+
+{% if events %}
+  <div class="rangoli-divider"><div class="rangoli"></div></div>
+
+  <section class="section" id="events">
+    <div class="container">
+      <div class="section-title">
+        <h2><span class="marathi marathi-font">{{ 'Events & Festivals'|t }}</span></h2>
+      </div>
+
+      <div class="events-container">
+        <div class="calendar">
+          <div class="calendar-header">
+            <h3 class="marathi-font"></h3>
+            <div class="calendar-nav">
+              <button class="calendar-nav-btn" type="button" aria-label="{{ 'Previous month'|t }}">
+                <i class="fas fa-chevron-left" aria-hidden="true"></i>
+              </button>
+              <button class="calendar-nav-btn" type="button" aria-label="{{ 'Next month'|t }}">
+                <i class="fas fa-chevron-right" aria-hidden="true"></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="calendar-weekdays">
+            {% for day in ['Mon'|t, 'Tue'|t, 'Wed'|t, 'Thu'|t, 'Fri'|t, 'Sat'|t, 'Sun'|t] %}
+              <div class="calendar-day marathi-font">{{ day }}</div>
+            {% endfor %}
+          </div>
+
+          <div class="calendar-grid"></div>
+        </div>
+
+        <div class="event-highlights">
+          {{ events }}
+        </div>
+      </div>
+
+      <div class="section-button">
+        <a class="cta-button marathi-font" href="{{ url('view.pn_events.page_1') }}">
+          <span>{{ 'More'|t }}</span>
+          <i class="fas fa-angle-right" aria-hidden="true"></i>
+        </a>
+      </div>
+    </div>
+  </section>
+{% endif %}

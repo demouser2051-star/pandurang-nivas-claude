@@ -1,0 +1,174 @@
+{#
+/**
+ * @file
+ * The site frame: hero, sticky header, content and the three-column footer.
+ *
+ * The markup mirrors the original static site so its stylesheet applies
+ * unchanged; Drupal supplies the menu, language switcher and user links.
+ */
+#}
+{% if page.hero %}
+  {{ page.hero }}
+{% endif %}
+
+<header id="header">
+  <div class="container">
+    <div class="header-content">
+
+      <a class="logo" id="home-logo" href="{{ front_url }}" rel="home">
+        <div class="logo-icon">
+          {% if logo_url %}
+            <img src="{{ logo_url }}" alt="{{ site_name }}">
+          {% endif %}
+        </div>
+        <div class="logo-text">
+          <span class="marathi marathi-font">{{ site_name }}</span>
+        </div>
+      </a>
+
+      <nav id="main-nav">
+        {{ page.primary_menu }}
+      </nav>
+
+      <div class="header-actions">
+
+        {% if is_family_member %}
+          <div class="search-toggle private">
+            <button class="search-toggle-btn" type="button" aria-label="{{ 'Search'|t }}">
+              <i class="fas fa-search" aria-hidden="true"></i>
+            </button>
+            <div id="search" class="search-dropdown">
+              <i class="fas fa-search search-icon" aria-hidden="true"></i>
+              <label class="visually-hidden" for="pn-search-input">{{ 'Search'|t }}</label>
+              <input type="search" class="search-input" id="pn-search-input"
+                     placeholder="{{ 'Search…'|t }}" autocomplete="off">
+              <div class="search-results" id="search-results" aria-live="polite"></div>
+            </div>
+          </div>
+        {% endif %}
+
+        {{ page.header_actions }}
+
+        {% if logged_in %}
+          <div class="user private">
+            <button class="user-avatar" type="button" aria-label="{{ 'Account'|t }}">
+              <i class="fas fa-user-circle fa-3x" aria-hidden="true"></i>
+            </button>
+            <div id="user-options" class="user-dropdown">
+              <a href="{{ path('user.page') }}" class="user-dropdown-item marathi-font">{{ 'My Account'|t }}</a>
+              <a href="{{ path('user.logout') }}" class="user-dropdown-item marathi-font">{{ 'Logout'|t }}</a>
+            </div>
+          </div>
+
+          {% if notifications %}
+            <div class="notification-widget private">
+              <button class="notification-button" type="button" aria-label="{{ 'Notifications'|t }}">
+                <i class="fas fa-bell" aria-hidden="true"></i>
+                <div class="notification-badge">{{ notifications|length }}</div>
+              </button>
+              <div id="notifications" class="notification-dropdown">
+                {% for item in notifications %}
+                  <div class="notification-item">
+                    <div class="notification-title marathi-font">{{ item.title }}</div>
+                    <div class="notification-message marathi-font">{{ item.message }}</div>
+                    <div class="notification-time marathi-font">{{ item.time }}</div>
+                  </div>
+                {% endfor %}
+              </div>
+            </div>
+          {% endif %}
+        {% else %}
+          <a class="login-btn marathi-font" href="{{ path('user.login') }}">{{ 'Login'|t }}</a>
+        {% endif %}
+
+      </div>
+
+      <button class="mobile-menu-btn" id="menu-toggle" type="button" aria-label="{{ 'Menu'|t }}">
+        <i class="fas fa-bars" aria-hidden="true"></i>
+      </button>
+
+    </div>
+  </div>
+</header>
+
+{% if page.breadcrumb %}
+  <div class="container">{{ page.breadcrumb }}</div>
+{% endif %}
+
+{% if page.highlighted %}
+  <div class="container highlighted">{{ page.highlighted }}</div>
+{% endif %}
+
+<main id="main-content" role="main">
+  {#
+    Interior pages need the same 1200px container the header and footer use,
+    or listings such as the events grid run the full width of the window. The
+    front page is built from full-bleed sections that carry their own
+    containers, so it is left alone.
+  #}
+  {% if is_front %}
+    {{ page.content }}
+  {% else %}
+    <div class="container">
+      {{ page.content }}
+    </div>
+  {% endif %}
+</main>
+
+{% if page.sidebar %}
+  <aside class="sidebar container">{{ page.sidebar }}</aside>
+{% endif %}
+
+<footer id="footer">
+  <div class="container">
+    <div class="footer-content">
+
+      <div class="footer-column">
+        {% if page.footer_about %}
+          {{ page.footer_about }}
+        {% else %}
+          <h3 class="marathi-font">{{ site_name }}</h3>
+          <p class="marathi-font">{{ site_slogan }}</p>
+        {% endif %}
+        <div class="social-links">
+          <a href="#" class="social-icon" aria-label="Facebook"><i class="fab fa-facebook-f" aria-hidden="true"></i></a>
+          <a href="#" class="social-icon" aria-label="Instagram"><i class="fab fa-instagram" aria-hidden="true"></i></a>
+          <a href="#" class="social-icon" aria-label="YouTube"><i class="fab fa-youtube" aria-hidden="true"></i></a>
+          <a href="#" class="social-icon" aria-label="WhatsApp"><i class="fab fa-whatsapp" aria-hidden="true"></i></a>
+        </div>
+      </div>
+
+      <div class="footer-column">
+        <h3 class="marathi-font">{{ 'Quick Links'|t }}</h3>
+        <div class="footer-links-columns">
+          {{ page.footer_links }}
+        </div>
+      </div>
+
+      <div class="footer-column">
+        <h3 class="marathi-font">{{ 'Contact'|t }}</h3>
+        {% if page.footer_contact %}
+          {{ page.footer_contact }}
+        {% else %}
+          <ul class="footer-links">
+            <li><span><i class="fas fa-map-marker-alt" aria-hidden="true"></i> <span class="marathi-font">{{ 'Pandurang Nivas, Hatade'|t }}</span></span></li>
+            <li><a href="tel:+919876543210"><i class="fas fa-phone" aria-hidden="true"></i> <span>+91 98765 43210</span></a></li>
+            <li><a href="mailto:contactus@pandurangnivas.in"><i class="fas fa-envelope" aria-hidden="true"></i> <span>contactus@pandurangnivas.in</span></a></li>
+            <li><a href="https://www.pandurangnivas.in"><i class="fas fa-globe" aria-hidden="true"></i> <span>www.pandurangnivas.in</span></a></li>
+          </ul>
+        {% endif %}
+      </div>
+
+    </div>
+
+    <div class="copyright">
+      <p class="marathi-font">
+        &copy; {{ 'now'|date('Y') }} {{ site_name }}. {{ 'All rights reserved.'|t }}
+        {% if privacy_url %}
+          <a href="{{ privacy_url }}">{{ 'Privacy Policy'|t }}</a>
+        {% endif %}
+      </p>
+      {{ page.footer_bottom }}
+    </div>
+  </div>
+</footer>

@@ -1,0 +1,346 @@
+/**
+ * @file
+ * The family tree: an indented, collapsible descendant chart.
+ *
+ * Colours come from the theme's custom properties, with fallbacks so the
+ * tree still reads correctly if it is rendered outside the Pandurang theme.
+ */
+
+.pn-tree {
+  --pn-tree-line: var(--accent-light, #f9b384);
+  --pn-tree-primary: var(--primary, #e3000f);
+  --pn-tree-secondary: var(--secondary, #ef7c00);
+  --pn-tree-dark: var(--dark, #2e2d2a);
+
+  margin: 0 auto;
+  max-width: 1200px;
+  padding: 0 20px 60px;
+}
+
+/* Toolbar ----------------------------------------------------------------- */
+
+.pn-tree__toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 32px;
+  padding: 18px 22px;
+  background: rgba(255, 255, 255, 0.85);
+  border-radius: var(--border-radius, 12px);
+  box-shadow: var(--shadow, 0 4px 20px rgba(0, 0, 0, 0.1));
+}
+
+.pn-tree__search {
+  flex: 1 1 240px;
+}
+
+.pn-tree__search input {
+  width: 100%;
+  padding: 10px 16px;
+  font: inherit;
+  color: var(--pn-tree-dark);
+  background: #fff;
+  border: 2px solid rgba(46, 45, 42, 0.12);
+  border-radius: 999px;
+  transition: border-color 0.25s ease;
+}
+
+.pn-tree__search input:focus {
+  outline: none;
+  border-color: var(--pn-tree-secondary);
+}
+
+.pn-tree__controls {
+  display: flex;
+  gap: 8px;
+}
+
+.pn-tree__btn {
+  padding: 9px 18px;
+  font: inherit;
+  font-size: 0.9rem;
+  color: var(--pn-tree-dark);
+  cursor: pointer;
+  background: var(--light, #f5f2eb);
+  border: 1px solid rgba(46, 45, 42, 0.12);
+  border-radius: 999px;
+  transition: background 0.25s ease, color 0.25s ease;
+}
+
+.pn-tree__btn:hover,
+.pn-tree__btn:focus-visible {
+  color: #fff;
+  background: var(--pn-tree-secondary);
+  border-color: var(--pn-tree-secondary);
+}
+
+.pn-tree__count {
+  margin-inline-start: auto;
+  font-size: 0.9rem;
+  color: rgba(46, 45, 42, 0.65);
+}
+
+.pn-tree__empty,
+.pn-tree__empty-search {
+  padding: 24px;
+  text-align: center;
+  color: rgba(46, 45, 42, 0.7);
+}
+
+/* Branches ---------------------------------------------------------------- */
+
+.tree-branch {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.tree-branch--root {
+  padding-inline-start: 0;
+}
+
+/* Nested lists step in and carry the vertical connector line. */
+.tree-node .tree-branch {
+  position: relative;
+  margin-inline-start: 26px;
+  padding-inline-start: 26px;
+}
+
+.tree-node .tree-branch::before {
+  position: absolute;
+  inset-block: 0;
+  inset-inline-start: 0;
+  width: 2px;
+  content: "";
+  background: var(--pn-tree-line);
+  opacity: 0.55;
+}
+
+/* A collapsed person hides their descendants but stays visible themselves. */
+.tree-node.is-collapsed > .tree-branch {
+  display: none;
+}
+
+.tree-node.is-hidden {
+  display: none;
+}
+
+/* Person card ------------------------------------------------------------- */
+
+.tree-node {
+  position: relative;
+  margin: 6px 0;
+}
+
+/* The elbow joining a person to their parent's vertical line. */
+.tree-node .tree-branch > .tree-node::before {
+  position: absolute;
+  inset-inline-start: -26px;
+  top: 26px;
+  width: 20px;
+  height: 2px;
+  content: "";
+  background: var(--pn-tree-line);
+  opacity: 0.55;
+}
+
+.tree-node__card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 18px 10px 12px;
+  background: #fff;
+  border: 1px solid rgba(46, 45, 42, 0.08);
+  border-inline-start: 4px solid var(--pn-tree-line);
+  border-radius: var(--border-radius, 12px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.tree-node__card:hover {
+  transform: translateX(3px);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+}
+
+.tree-node--male > .tree-node__card {
+  border-inline-start-color: var(--pn-tree-secondary);
+}
+
+.tree-node--female > .tree-node__card {
+  border-inline-start-color: var(--pn-tree-primary);
+}
+
+.tree-node.is-match > .tree-node__card {
+  background: var(--accent-red, #ffd9d9);
+  border-color: var(--pn-tree-primary);
+}
+
+/* Toggle */
+
+.tree-node__toggle {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  cursor: pointer;
+  background: var(--light, #f5f2eb);
+  border: 1px solid rgba(46, 45, 42, 0.15);
+  border-radius: 50%;
+  transition: background 0.2s ease;
+}
+
+.tree-node__toggle:hover {
+  background: var(--accent-light, #f9b384);
+}
+
+.tree-node__toggle span {
+  position: relative;
+  display: block;
+  width: 9px;
+  height: 9px;
+}
+
+.tree-node__toggle span::before,
+.tree-node__toggle span::after {
+  position: absolute;
+  background: var(--pn-tree-dark);
+  content: "";
+}
+
+/* Horizontal bar is always there; the vertical one only when collapsed. */
+.tree-node__toggle span::before {
+  top: 50%;
+  left: 0;
+  width: 9px;
+  height: 1.5px;
+  transform: translateY(-50%);
+}
+
+.tree-node__toggle span::after {
+  top: 0;
+  left: 50%;
+  width: 1.5px;
+  height: 9px;
+  transform: translateX(-50%) scaleY(0);
+  transition: transform 0.2s ease;
+}
+
+.tree-node.is-collapsed > .tree-node__card > .tree-node__toggle span::after {
+  transform: translateX(-50%) scaleY(1);
+}
+
+/* Avatar and text */
+
+.tree-node__photo,
+.tree-node__avatar {
+  flex: none;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+}
+
+.tree-node__photo {
+  object-fit: cover;
+}
+
+.tree-node__avatar {
+  display: grid;
+  place-items: center;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #fff;
+  background: linear-gradient(135deg, var(--pn-tree-secondary), var(--pn-tree-primary));
+}
+
+.tree-node__body {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 10px;
+  min-width: 0;
+}
+
+.tree-node__name {
+  font-size: 1.02rem;
+  font-weight: 600;
+  color: var(--pn-tree-dark);
+  text-decoration: none;
+}
+
+.tree-node__name:hover {
+  color: var(--pn-tree-primary);
+  text-decoration: underline;
+}
+
+.tree-node__spouse {
+  font-size: 0.87rem;
+  color: rgba(46, 45, 42, 0.6);
+}
+
+.tree-node__spouse::before {
+  margin-inline-end: 4px;
+  content: "\002B";
+  opacity: 0.6;
+}
+
+/* Narrow screens ---------------------------------------------------------- */
+
+@media (max-width: 600px) {
+  .pn-tree {
+    padding-inline: 12px;
+  }
+
+  .tree-node .tree-branch {
+    margin-inline-start: 14px;
+    padding-inline-start: 16px;
+  }
+
+  .tree-node .tree-branch > .tree-node::before {
+    inset-inline-start: -16px;
+    width: 12px;
+  }
+
+  .tree-node__card {
+    padding: 8px 12px 8px 8px;
+  }
+
+  .tree-node__photo,
+  .tree-node__avatar {
+    width: 32px;
+    height: 32px;
+  }
+
+  .pn-tree__count {
+    margin-inline-start: 0;
+  }
+}
+
+/* RSVP widget ------------------------------------------------------------- */
+
+.pn-rsvp.is-saving {
+  opacity: 0.6;
+}
+
+.pn-rsvp__count {
+  display: inline-block;
+  min-width: 1.4em;
+  margin-inline-start: 6px;
+  padding: 1px 6px;
+  font-size: 0.78rem;
+  background: rgba(255, 255, 255, 0.35);
+  border-radius: 999px;
+}
+
+.pn-rsvp__message:empty {
+  display: none;
+}
+
+.pn-rsvp__message {
+  flex-basis: 100%;
+  margin-top: 8px;
+  font-size: 0.86rem;
+  color: var(--primary, #e3000f);
+}

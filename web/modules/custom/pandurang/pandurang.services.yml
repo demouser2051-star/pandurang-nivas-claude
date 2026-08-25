@@ -1,0 +1,15 @@
+services:
+  pandurang.rsvp:
+    class: Drupal\pandurang\Service\RsvpManager
+    arguments:
+      - '@database'
+      - '@current_user'
+      - '@datetime.time'
+      - '@cache_tags.invalidator'
+
+  pandurang.family_tree:
+    class: Drupal\pandurang\Service\FamilyTreeBuilder
+    arguments:
+      - '@entity_type.manager'
+      - '@language_manager'
+      - '@cache.default'

@@ -1,0 +1,285 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Pandurang Nivas\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: mr\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+# Hero slides
+msgid "Pandurang Nivas Family"
+msgstr "पांडुरंग निवास कुटुंब"
+
+msgid "Preserving our traditional Marathi heritage for generations"
+msgstr "आपला पारंपरिक मराठी वारसा पिढ्यानपिढ्या जपत आहोत"
+
+msgid "Join the Family"
+msgstr "तुम्हीही सदस्य व्हा"
+
+msgid "Family Connecting Platform"
+msgstr "कुटुंब एकत्र आणणारे व्यासपीठ"
+
+msgid "Digital platform connecting all family members"
+msgstr "सर्व कुटुंबाच्या सदस्यांना एकत्र आणणारे डिजिटल व्यासपीठ"
+
+msgid "Learn More"
+msgstr "अधिक जाणून घ्या"
+
+msgid "Traditional Marathi Culture"
+msgstr "पारंपरिक मराठी संस्कृती"
+
+msgid "Preserving our traditions, culture and values"
+msgstr "आमच्या परंपरा, संस्कृती आणि मूल्यांना जपत आहोत"
+
+msgid "View Our Traditions"
+msgstr "आमची परंपरा पहा"
+
+msgid "Festivals and Celebrations"
+msgstr "सण आणि उत्सव"
+
+msgid "Participate in all festivals and events"
+msgstr "सर्व सण आणि कार्यक्रमांमध्ये सहभागी व्हा"
+
+msgid "View Events"
+msgstr "कार्यक्रम पहा"
+
+# Sections
+msgid "Family Tree"
+msgstr "कुटुंबवृक्ष"
+
+msgid "Family Gallery"
+msgstr "कौटुंबिक चित्र संग्रह"
+
+msgid "Events & Festivals"
+msgstr "सण आणि कार्यक्रम"
+
+msgid "Quick Links"
+msgstr "जलद दुवे"
+
+msgid "Contact"
+msgstr "संपर्क"
+
+msgid "All rights reserved."
+msgstr "सर्व हक्क राखीव."
+
+msgid "Pandurang Nivas, Hatade"
+msgstr "पांडुरंग निवास, हातदे"
+
+# Buttons and links
+msgid "More"
+msgstr "अधिक"
+
+msgid "All"
+msgstr "सर्व"
+
+msgid "Photos"
+msgstr "छायाचित्रे"
+
+msgid "Videos"
+msgstr "चलचित्रे"
+
+msgid "View the full tree"
+msgstr "विस्तृत कुटुंबवृक्ष पहा"
+
+msgid "Login"
+msgstr "लॉगिन"
+
+msgid "Log in"
+msgstr "प्रवेश करा"
+
+msgid "Logout"
+msgstr "बाहेर पडा"
+
+msgid "Log out"
+msgstr "बाहेर पडा"
+
+msgid "My Account"
+msgstr "माझे खाते"
+
+msgid "Account"
+msgstr "खाते"
+
+msgid "Menu"
+msgstr "मेनू"
+
+msgid "Notifications"
+msgstr "सूचना"
+
+msgid "Search"
+msgstr "शोधा"
+
+msgid "Search…"
+msgstr "शोधा..."
+
+msgid "Nothing found"
+msgstr "काहीही सापडले नाही"
+
+msgid "Skip to main content"
+msgstr "मुख्य मजकुरावर जा"
+
+msgid "Home"
+msgstr "मुखपृष्ठ"
+
+msgid "About Us"
+msgstr "आमच्याबद्दल"
+
+msgid "Gallery"
+msgstr "चित्रदालन"
+
+msgid "Events"
+msgstr "कार्यक्रम"
+
+msgid "Contact Us"
+msgstr "संपर्क"
+
+msgid "Privacy Policy"
+msgstr "गोपनीयता धोरण"
+
+msgid "Albums"
+msgstr "अल्बम"
+
+msgid "Pages"
+msgstr "पृष्ठे"
+
+msgid "News"
+msgstr "बातम्या"
+
+# Slideshow controls
+msgid "Previous slide"
+msgstr "मागील स्लाइड"
+
+msgid "Next slide"
+msgstr "पुढील स्लाइड"
+
+msgid "Slide @n"
+msgstr "स्लाइड @n"
+
+msgid "Previous"
+msgstr "मागील"
+
+msgid "Next"
+msgstr "पुढील"
+
+msgid "Close"
+msgstr "बंद करा"
+
+msgid "Previous month"
+msgstr "मागील महिना"
+
+msgid "Next month"
+msgstr "पुढील महिना"
+
+# Weekdays
+msgid "Mon"
+msgstr "सोम"
+
+msgid "Tue"
+msgstr "मंगळ"
+
+msgid "Wed"
+msgstr "बुध"
+
+msgid "Thu"
+msgstr "गुरु"
+
+msgid "Fri"
+msgstr "शुक्र"
+
+msgid "Sat"
+msgstr "शनि"
+
+msgid "Sun"
+msgstr "रवि"
+
+# RSVP
+msgid "Going"
+msgstr "येणार"
+
+msgid "Maybe"
+msgstr "कदाचित"
+
+msgid "Can't Come"
+msgstr "नाही"
+
+msgid "Not going"
+msgstr "येणार नाही"
+
+msgid "Sign in as a family member to respond."
+msgstr "उत्तर देण्यासाठी कुटुंब सदस्य म्हणून प्रवेश करा."
+
+msgid "Your response could not be saved. Please try again."
+msgstr "तुमचे उत्तर जतन झाले नाही. कृपया पुन्हा प्रयत्न करा."
+
+msgid "Nobody has responded yet."
+msgstr "अद्याप कोणीही उत्तर दिलेले नाही."
+
+msgid "Member"
+msgstr "सदस्य"
+
+msgid "Response"
+msgstr "उत्तर"
+
+msgid "Guests"
+msgstr "पाहुणे"
+
+msgid "Note"
+msgstr "टीप"
+
+msgid "Updated"
+msgstr "अद्ययावत"
+
+msgid "Event responses"
+msgstr "कार्यक्रमाची उत्तरे"
+
+# Family tree
+msgid "Search the family tree"
+msgstr "कुटुंबवृक्षात शोधा"
+
+msgid "Search by name…"
+msgstr "नावाने शोधा..."
+
+msgid "Expand all"
+msgstr "सर्व उघडा"
+
+msgid "Collapse all"
+msgstr "सर्व बंद करा"
+
+msgid "No one by that name."
+msgstr "त्या नावाचे कोणीही नाही."
+
+msgid "The family tree has no entries yet."
+msgstr "कुटुंबवृक्षात अद्याप नोंदी नाहीत."
+
+msgid "@count family members"
+msgstr "@count कुटुंब सदस्य"
+
+msgid "Show or hide descendants"
+msgstr "वंशज दाखवा किंवा लपवा"
+
+msgid "@ago ago"
+msgstr "@ago पूर्वी"
+
+msgid "Nothing here yet."
+msgstr "येथे अद्याप काहीही नाही."
+
+msgid "Spouse"
+msgstr "जोडीदार"
+
+msgid "Parent"
+msgstr "पालक"
+
+msgid "Children"
+msgstr "अपत्ये"
+
+msgid "Notes"
+msgstr "टीप"
+
+msgid "Generation @n"
+msgstr "पिढी @n"
+
+msgid "Back to the family tree"
+msgstr "कुटुंबवृक्षाकडे परत"
+
+msgid "Sign in as a family member to respond."
+msgstr "उत्तर देण्यासाठी कुटुंब सदस्य म्हणून प्रवेश करा."

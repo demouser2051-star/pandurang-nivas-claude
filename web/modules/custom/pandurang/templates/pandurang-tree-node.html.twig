@@ -1,0 +1,47 @@
+{#
+/**
+ * @file
+ * One person in the family tree, plus their descendants.
+ *
+ * Available variables:
+ * - member: name, spouse, sex, photo, url and children.
+ * - depth: how deep this person sits, 0 for the root.
+ */
+#}
+<li class="tree-node tree-node--{{ member.sex }}{{ member.children ? ' has-children' : '' }}"
+    data-legacy-id="{{ member.id }}"
+    data-depth="{{ depth }}">
+
+  <div class="tree-node__card">
+    {% if member.children %}
+      <button type="button" class="tree-node__toggle" aria-expanded="true"
+              aria-label="{{ 'Show or hide descendants'|t }}">
+        <span aria-hidden="true"></span>
+      </button>
+    {% endif %}
+
+    {% if member.photo %}
+      <img class="tree-node__photo" src="{{ member.photo }}" alt="{{ member.name }}" loading="lazy">
+    {% else %}
+      <span class="tree-node__avatar" aria-hidden="true">{{ member.name|slice(0, 1) }}</span>
+    {% endif %}
+
+    <span class="tree-node__body">
+      <a class="tree-node__name marathi-font" href="{{ member.url }}">{{ member.name }}</a>
+      {% if member.spouse %}
+        <span class="tree-node__spouse marathi-font">{{ member.spouse }}</span>
+      {% endif %}
+    </span>
+  </div>
+
+  {% if member.children %}
+    <ul class="tree-branch">
+      {% for child in member.children %}
+        {% include '@pandurang/pandurang-tree-node.html.twig' with {
+          'member': child,
+          'depth': depth + 1,
+        } only %}
+      {% endfor %}
+    </ul>
+  {% endif %}
+</li>

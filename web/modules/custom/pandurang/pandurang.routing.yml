@@ -1,0 +1,58 @@
+pandurang.rsvp_submit:
+  path: '/pandurang/rsvp/{node}'
+  defaults:
+    _controller: '\Drupal\pandurang\Controller\RsvpController::submit'
+  methods: [POST]
+  requirements:
+    _permission: 'rsvp to events'
+    _csrf_request_header_token: 'TRUE'
+    node: \d+
+  options:
+    parameters:
+      node:
+        type: entity:node
+
+pandurang.rsvp_report:
+  path: '/node/{node}/responses'
+  defaults:
+    _controller: '\Drupal\pandurang\Controller\RsvpController::report'
+    _title: 'Responses'
+  requirements:
+    _permission: 'view pn rsvp report'
+    node: \d+
+  options:
+    parameters:
+      node:
+        type: entity:node
+
+pandurang.family_tree_data:
+  path: '/pandurang/family-tree.json'
+  defaults:
+    _controller: '\Drupal\pandurang\Controller\FamilyTreeController::data'
+  methods: [GET]
+  requirements:
+    _permission: 'view pn private content'
+
+pandurang.search:
+  path: '/pandurang/search'
+  defaults:
+    _controller: '\Drupal\pandurang\Controller\SearchController::search'
+  methods: [GET]
+  requirements:
+    _permission: 'access content'
+
+pandurang.family_tree_page:
+  path: '/family-tree'
+  defaults:
+    _controller: '\Drupal\pandurang\Controller\FamilyTreeController::page'
+    _title_callback: '\Drupal\pandurang\Controller\FamilyTreeController::pageTitle'
+  requirements:
+    _permission: 'view pn private content'
+
+pandurang.home:
+  path: '/home'
+  defaults:
+    _controller: '\Drupal\pandurang\Controller\HomeController::page'
+    _title_callback: '\Drupal\pandurang\Controller\HomeController::pageTitle'
+  requirements:
+    _permission: 'access content'

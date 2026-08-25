@@ -1,0 +1,42 @@
+{#
+/**
+ * @file
+ * An event card, matching .event-card in the original stylesheet.
+ */
+#}
+<article{{ attributes.addClass('event-card') }}>
+  <div class="event-header">
+    <h3 class="marathi-font">
+      <a href="{{ url }}" rel="bookmark">{{ label }}</a>
+    </h3>
+  </div>
+
+  <div class="event-body">
+    <div class="event-details">
+      {% if content.field_event_start|render %}
+        <div class="event-detail">
+          <i class="fas fa-calendar" aria-hidden="true"></i>
+          <span class="marathi-font">{{ content.field_event_start }}</span>
+        </div>
+      {% endif %}
+
+      {% if content.field_event_location|render %}
+        <div class="event-detail">
+          <i class="fas fa-map-marker-alt" aria-hidden="true"></i>
+          <span class="marathi-font">{{ content.field_event_location }}</span>
+        </div>
+      {% endif %}
+
+      {% if content.field_event_time|render %}
+        <div class="event-detail">
+          <i class="fas fa-clock" aria-hidden="true"></i>
+          <span class="marathi-font">{{ content.field_event_time }}</span>
+        </div>
+      {% endif %}
+    </div>
+
+    {{ content.body }}
+
+    {{ content.pandurang_rsvp }}
+  </div>
+</article>

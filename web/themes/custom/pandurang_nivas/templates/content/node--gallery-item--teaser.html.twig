@@ -1,0 +1,28 @@
+{#
+/**
+ * @file
+ * A gallery tile, matching .gallery-item in the original stylesheet.
+ *
+ * data-type drives the All / Photos / Videos filter.
+ */
+#}
+{% set media_type = node.field_gi_type.value ?: 'image' %}
+
+<div{{ attributes.addClass('gallery-item').setAttribute('data-type', media_type) }}>
+  {{ content.field_gi_image }}
+
+  {% if media_type == 'video' %}
+    <div class="video-icon">
+      <i class="fas fa-play" aria-hidden="true"></i>
+    </div>
+  {% endif %}
+
+  <div class="gallery-overlay">
+    <h4 class="marathi-font">
+      <a href="{{ url }}">{{ label }}</a>
+    </h4>
+    {% if content.field_gi_caption|render %}
+      <p class="marathi-font">{{ content.field_gi_caption }}</p>
+    {% endif %}
+  </div>
+</div>

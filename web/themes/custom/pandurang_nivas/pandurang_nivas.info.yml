@@ -1,0 +1,30 @@
+name: Pandurang Nivas
+type: theme
+description: 'The Pandurang Nivas family platform theme, in Marathi and English.'
+package: Pandurang Nivas
+core_version_requirement: ^10 || ^11
+base theme: stable9
+
+logo: images/logo.svg
+favicon: images/favicon.ico
+
+libraries:
+  - pandurang_nivas/global
+
+libraries-override:
+  # The original stylesheet already resets and lays out everything.
+  system/base: false
+
+regions:
+  header: 'Header'
+  primary_menu: 'Primary menu'
+  header_actions: 'Header actions'
+  hero: 'Hero'
+  highlighted: 'Highlighted'
+  breadcrumb: 'Breadcrumb'
+  content: 'Content'
+  sidebar: 'Sidebar'
+  footer_about: 'Footer: about'
+  footer_links: 'Footer: quick links'
+  footer_contact: 'Footer: contact'
+  footer_bottom: 'Footer: bottom'

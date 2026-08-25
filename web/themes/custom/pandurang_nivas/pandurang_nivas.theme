@@ -1,0 +1,288 @@
+<?php
+
+/**
+ * @file
+ * Theme hooks for the Pandurang Nivas theme.
+ */
+
+use Drupal\Core\Template\Attribute;
+use Drupal\node\NodeInterface;
+
+/**
+ * Implements hook_preprocess_HOOK() for html.html.twig.
+ */
+function pandurang_nivas_preprocess_html(array &$variables) {
+  $variables['language'] = \Drupal::languageManager()->getCurrentLanguage()->getId();
+
+  // The front page's route title is the site name, which would otherwise come
+  // out as "पांडुरंग निवास | पांडुरंग निवास".
+  if (!empty($variables['head_title']) && is_array($variables['head_title'])) {
+    $seen = [];
+    foreach ($variables['head_title'] as $key => $part) {
+      $text = trim((string) $part);
+      if ($text === '' || isset($seen[$text])) {
+        unset($variables['head_title'][$key]);
+        continue;
+      }
+      $seen[$text] = TRUE;
+    }
+  }
+
+  // Route-specific body classes, so the ported per-page stylesheets can hook on.
+  $route = \Drupal::routeMatch()->getRouteName();
+  if ($route === 'pandurang.family_tree_page') {
+    $variables['attributes']['class'][] = 'page-family-tree';
+  }
+
+  // stable9 does not add this, and the layout rules below depend on it to tell
+  // the full-bleed front page from the contained interior pages.
+  $variables['attributes']['class'][] = \Drupal::service('path.matcher')->isFrontPage()
+    ? 'path-frontpage'
+    : 'path-interior';
+
+  $node = \Drupal::routeMatch()->getParameter('node');
+  if ($node instanceof NodeInterface) {
+    $variables['attributes']['class'][] = 'page-node-type-' . str_replace('_', '-', $node->bundle());
+  }
+}
+
+/**
+ * Implements hook_preprocess_HOOK() for page.html.twig.
+ */
+function pandurang_nivas_preprocess_page(array &$variables) {
+  $config = \Drupal::config('system.site');
+  $variables['site_name'] = $config->get('name');
+  $variables['site_slogan'] = $config->get('slogan');
+  $variables['front_url'] = \Drupal::urlGenerator()->generateFromRoute('<front>');
+
+  $logo = theme_get_setting('logo.url');
+  $variables['logo_url'] = $logo ?: NULL;
+
+  $account = \Drupal::currentUser();
+  $variables['is_family_member'] = $account->hasPermission('view pn private content');
+
+  // The notification dropdown, newest first.
+  $variables['notifications'] = $account->isAuthenticated()
+    ? pandurang_nivas_load_notifications()
+    : [];
+
+  // The privacy link sits on the copyright line, not in the quick links.
+  $variables['privacy_url'] = NULL;
+  $privacy = \Drupal::entityTypeManager()->getStorage('node')
+    ->loadByProperties(['type' => 'page', 'title' => 'गोपनीयता धोरण']);
+  if ($privacy) {
+    $variables['privacy_url'] = reset($privacy)->toUrl()->toString();
+  }
+
+  $variables['#cache']['contexts'][] = 'user.permissions';
+  $variables['#cache']['contexts'][] = 'languages:language_interface';
+  $variables['#cache']['tags'][] = 'node_list:notification';
+  $variables['#cache']['tags'][] = 'node_list:page';
+}
+
+/**
+ * Loads the three most recent notifications in the active language.
+ */
+function pandurang_nivas_load_notifications(int $limit = 3): array {
+  $storage = \Drupal::entityTypeManager()->getStorage('node');
+  $langcode = \Drupal::languageManager()->getCurrentLanguage()->getId();
+
+  $nids = $storage->getQuery()
+    ->accessCheck(TRUE)
+    ->condition('type', 'notification')
+    ->condition('status', NodeInterface::PUBLISHED)
+    ->sort('created', 'DESC')
+    ->range(0, $limit)
+    ->execute();
+
+  if (!$nids) {
+    return [];
+  }
+
+  $date_formatter = \Drupal::service('date.formatter');
+  $items = [];
+
+  foreach ($storage->loadMultiple($nids) as $node) {
+    if ($node->hasTranslation($langcode)) {
+      $node = $node->getTranslation($langcode);
+    }
+    $items[] = [
+      'title' => $node->label(),
+      'message' => $node->get('body')->isEmpty()
+        ? ''
+        : strip_tags((string) $node->get('body')->value),
+      'time' => t('@ago ago', [
+        '@ago' => $date_formatter->formatTimeDiffSince($node->getCreatedTime(), ['granularity' => 1]),
+      ]),
+      'url' => $node->toUrl()->toString(),
+    ];
+  }
+
+  return $items;
+}
+
+/**
+ * Implements hook_preprocess_HOOK() for node.html.twig.
+ */
+function pandurang_nivas_preprocess_node(array &$variables) {
+  /** @var \Drupal\node\NodeInterface $node */
+  $node = $variables['node'];
+
+  // Pull the per-page stylesheets in only where they are needed.
+  $libraries = [
+    'event' => 'pandurang_nivas/events',
+    'gallery_item' => 'pandurang_nivas/gallery',
+    'album' => 'pandurang_nivas/gallery',
+    'page' => 'pandurang_nivas/about',
+  ];
+  if (isset($libraries[$node->bundle()])) {
+    $variables['#attached']['library'][] = $libraries[$node->bundle()];
+  }
+
+  $variables['bundle_class'] = str_replace('_', '-', $node->bundle());
+
+  if ($node->bundle() === 'family_member' && $variables['view_mode'] === 'full') {
+    pandurang_nivas_member_relations($variables, $node);
+  }
+}
+
+/**
+ * Adds a member's parent and children to the template variables.
+ */
+function pandurang_nivas_member_relations(array &$variables, NodeInterface $node): void {
+  $langcode = \Drupal::languageManager()->getCurrentLanguage()->getId();
+  $storage = \Drupal::entityTypeManager()->getStorage('node');
+
+  $variables['member_generation'] = $node->get('field_fm_generation')->isEmpty()
+    ? NULL
+    : (int) $node->get('field_fm_generation')->value;
+
+  /**
+   * Reduces a member node to the handful of fields the template needs.
+   */
+  $summarise = function (NodeInterface $person) use ($langcode): array {
+    if ($person->hasTranslation($langcode)) {
+      $person = $person->getTranslation($langcode);
+    }
+    return [
+      'name' => $person->label(),
+      'spouse' => $person->get('field_fm_spouse')->value,
+      'url' => $person->toUrl()->toString(),
+    ];
+  };
+
+  $variables['member_parent'] = NULL;
+  if (!$node->get('field_fm_parent')->isEmpty()) {
+    $parent = $node->get('field_fm_parent')->entity;
+    if ($parent && $parent->access('view')) {
+      $variables['member_parent'] = $summarise($parent);
+    }
+  }
+
+  $child_nids = $storage->getQuery()
+    ->accessCheck(TRUE)
+    ->condition('type', 'family_member')
+    ->condition('status', 1)
+    ->condition('field_fm_parent', $node->id())
+    ->sort('nid', 'ASC')
+    ->execute();
+
+  $variables['member_children'] = array_values(array_map(
+    $summarise,
+    $storage->loadMultiple($child_nids)
+  ));
+
+  $variables['#cache']['tags'][] = 'node_list:family_member';
+}
+
+/**
+ * Implements hook_preprocess_HOOK() for blocks.
+ *
+ * Family member pages print their own styled name inside the card, so the
+ * standalone page title block would repeat it.
+ */
+function pandurang_nivas_preprocess_block(array &$variables) {
+  if (($variables['plugin_id'] ?? '') !== 'page_title_block') {
+    return;
+  }
+
+  $node = \Drupal::routeMatch()->getParameter('node');
+  if ($node instanceof NodeInterface && $node->bundle() === 'family_member') {
+    $variables['content'] = [];
+  }
+
+  $variables['#cache']['contexts'][] = 'route';
+}
+
+/**
+ * Implements hook_form_alter().
+ *
+ * Wraps the account forms in the card the rest of the site uses.
+ */
+function pandurang_nivas_form_alter(array &$form, $form_state, $form_id) {
+  $account_forms = [
+    'user_login_form',
+    'user_register_form',
+    'user_pass',
+    'user_pass_reset',
+    'contact_message_feedback_form',
+  ];
+
+  if (in_array($form_id, $account_forms, TRUE)) {
+    $form['#attributes']['class'][] = 'pn-form-page';
+  }
+}
+
+/**
+ * Implements hook_theme_suggestions_HOOK_alter() for blocks.
+ */
+function pandurang_nivas_theme_suggestions_block_alter(array &$suggestions, array $variables) {
+  if (!empty($variables['elements']['#id'])) {
+    $suggestions[] = 'block__' . $variables['elements']['#id'];
+  }
+}
+
+/**
+ * Implements hook_preprocess_HOOK() for menus.
+ *
+ * Marks the family-only links so the stylesheet can treat them as private.
+ */
+function pandurang_nivas_preprocess_menu(array &$variables) {
+  $private_routes = [
+    'pandurang.family_tree_page',
+    'view.pn_gallery.page_1',
+  ];
+
+  foreach ($variables['items'] as &$item) {
+    $url = $item['url'] ?? NULL;
+    if ($url && !$url->isExternal() && $url->isRouted()
+      && in_array($url->getRouteName(), $private_routes, TRUE)) {
+      if (!isset($item['attributes']) || !$item['attributes'] instanceof Attribute) {
+        $item['attributes'] = new Attribute();
+      }
+      $item['attributes']->addClass('private');
+    }
+  }
+}
+
+/**
+ * Implements hook_preprocess_HOOK() for the language switcher block.
+ */
+function pandurang_nivas_preprocess_links__language_block(array &$variables) {
+  // Short labels, matching the original म / En toggle.
+  $short = ['mr' => 'म', 'en' => 'En'];
+  $current = \Drupal::languageManager()->getCurrentLanguage()->getId();
+
+  foreach ($variables['links'] as $langcode => &$link) {
+    if (isset($short[$langcode])) {
+      $link['link']['#title'] = $short[$langcode];
+    }
+    $link['attributes']->addClass('lang-btn');
+    if ($langcode === $current) {
+      $link['attributes']->addClass('active');
+    }
+    if ($langcode === 'mr') {
+      $link['attributes']->addClass('marathi-font');
+    }
+  }
+}

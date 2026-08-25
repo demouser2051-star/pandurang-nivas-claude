@@ -1,0 +1,48 @@
+{#
+/**
+ * @file
+ * The whole family tree.
+ *
+ * Available variables:
+ * - tree: the root members, each with nested children.
+ * - member_count: how many people the tree holds.
+ */
+#}
+<div class="pn-tree" data-pn-tree>
+
+  <div class="pn-tree__toolbar">
+    <label class="pn-tree__search">
+      <span class="visually-hidden">{{ 'Search the family tree'|t }}</span>
+      <input type="search" data-pn-tree-search
+             placeholder="{{ 'Search by name…'|t }}"
+             autocomplete="off">
+    </label>
+
+    <div class="pn-tree__controls">
+      <button type="button" class="pn-tree__btn" data-pn-tree-expand>{{ 'Expand all'|t }}</button>
+      <button type="button" class="pn-tree__btn" data-pn-tree-collapse>{{ 'Collapse all'|t }}</button>
+    </div>
+
+    <p class="pn-tree__count marathi-font">
+      {{ '@count family members'|t({'@count': member_count}) }}
+    </p>
+  </div>
+
+  <p class="pn-tree__empty-search" data-pn-tree-no-match hidden>
+    {{ 'No one by that name.'|t }}
+  </p>
+
+  {% if tree %}
+    <ul class="tree-branch tree-branch--root">
+      {% for member in tree %}
+        {% include '@pandurang/pandurang-tree-node.html.twig' with {
+          'member': member,
+          'depth': 0,
+        } only %}
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p class="pn-tree__empty">{{ 'The family tree has no entries yet.'|t }}</p>
+  {% endif %}
+
+</div>

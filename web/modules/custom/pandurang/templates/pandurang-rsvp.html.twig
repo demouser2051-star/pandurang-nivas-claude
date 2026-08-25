@@ -1,0 +1,47 @@
+{#
+/**
+ * @file
+ * The Going / Maybe / Not going control on an event.
+ *
+ * Available variables:
+ * - nid: the event node ID.
+ * - current: the viewer's stored answer, or null.
+ * - counts: head count keyed by status.
+ * - may_respond: whether the viewer is allowed to answer.
+ */
+#}
+<div class="event-actions pn-rsvp" data-rsvp-widget="{{ nid }}">
+  {% if may_respond %}
+    <button type="button"
+            class="event-btn going marathi-font{{ current == 'going' ? ' is-active' : '' }}"
+            data-rsvp-status="going">
+      {{ 'Going'|t }}
+      <span class="pn-rsvp__count" data-rsvp-count="going">{{ counts.going.people }}</span>
+    </button>
+
+    <button type="button"
+            class="event-btn maybe marathi-font{{ current == 'maybe' ? ' is-active' : '' }}"
+            data-rsvp-status="maybe">
+      {{ 'Maybe'|t }}
+      <span class="pn-rsvp__count" data-rsvp-count="maybe">{{ counts.maybe.people }}</span>
+    </button>
+
+    <button type="button"
+            class="event-btn not-going marathi-font{{ current == 'not_going' ? ' is-active' : '' }}"
+            data-rsvp-status="not_going">
+      {{ "Can't Come"|t }}
+      <span class="pn-rsvp__count" data-rsvp-count="not_going">{{ counts.not_going.people }}</span>
+    </button>
+
+    <p class="pn-rsvp__message" data-rsvp-message aria-live="polite"></p>
+  {% else %}
+    <p class="pn-rsvp__signin marathi-font">
+      {{ 'Sign in as a family member to respond.'|t }}
+      <a href="{{ path('user.login', {}, {'query': {'destination': url('<current>')}}) }}">{{ 'Login'|t }}</a>
+    </p>
+    <p class="pn-rsvp__tally marathi-font">
+      {{ 'Going'|t }}: {{ counts.going.people }} &middot;
+      {{ 'Maybe'|t }}: {{ counts.maybe.people }}
+    </p>
+  {% endif %}
+</div>

@@ -1,0 +1,69 @@
+global:
+  version: 1.0
+  css:
+    theme:
+      css/main.css: {}
+      css/drupal-overrides.css: {}
+  js:
+    js/pandurang.js: {}
+  dependencies:
+    - core/drupal
+    - core/once
+    - core/drupalSettings
+    - pandurang_nivas/fontawesome
+
+# The icon set the original markup relies on, loaded from the same CDN.
+fontawesome:
+  version: '6.4.0'
+  remote: https://fontawesome.com
+  license:
+    name: 'CC BY 4.0 / SIL OFL 1.1 / MIT'
+    url: https://fontawesome.com/license/free
+    gpl-compatible: true
+  css:
+    theme:
+      https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css:
+        type: external
+        minified: true
+
+hero:
+  version: 1.0
+  js:
+    js/slideshow.js: {}
+  dependencies:
+    - core/drupal
+    - core/once
+
+gallery:
+  version: 1.0
+  css:
+    theme:
+      css/gallery.css: {}
+  js:
+    js/gallery.js: {}
+  dependencies:
+    - core/drupal
+    - core/once
+
+events:
+  version: 1.0
+  css:
+    theme:
+      css/events.css: {}
+  js:
+    js/events.js: {}
+  dependencies:
+    - core/drupal
+    - core/once
+
+about:
+  version: 1.0
+  css:
+    theme:
+      css/about.css: {}
+
+family-tree-page:
+  version: 1.0
+  css:
+    theme:
+      css/family-tree.css: {}

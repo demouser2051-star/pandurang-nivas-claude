@@ -1,0 +1,10 @@
+name: Pandurang Nivas
+type: module
+description: "Family platform behaviour for Pandurang Nivas: RSVP, family tree and member-only content."
+package: Pandurang Nivas
+core_version_requirement: ^10 || ^11
+dependencies:
+  - drupal:node
+  - drupal:user
+  - drupal:language
+  - drupal:content_translation

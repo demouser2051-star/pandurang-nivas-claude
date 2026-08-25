@@ -150,6 +150,20 @@ php vendor/bin/drush.php php:script scripts/01-language.php
 | `11-date-formats.php` | Date-only formatting for event dates |
 | `12-config-translations.php` | English config overrides |
 | `13-field-label-translations.php` | Marathi field labels |
+| `14-footer-menu.php` | The six footer quick links |
+| `15-fix-image-translatability.php` | Makes the image fields shared across languages |
+
+### A note on translatable fields
+
+Image fields are deliberately **non-translatable**. The same photograph serves
+both languages, and a translatable image field leaves every non-default
+language with an empty value — which is exactly what hid the gallery, event and
+album images on `/en` pages until `15-fix-image-translatability.php` was run.
+If you add an image field later, mark it `'translatable' => FALSE` in
+`02-content-types.php`.
+
+Text that genuinely differs per language — titles, body, captions, locations,
+timings — stays translatable.
 
 ---
 

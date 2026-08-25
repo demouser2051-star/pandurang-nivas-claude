@@ -110,8 +110,12 @@ pn_field('family_member', 'field_fm_parent', 'entity_reference', 'Parent', [
   ],
   'translatable' => FALSE,
 ]);
+// Images are shared across translations: the same photograph serves both
+// languages, and making them translatable leaves every non-default language
+// with an empty value.
 pn_field('family_member', 'field_fm_photo', 'image', 'Photo', ['settings' => ['uri_scheme' => 'public']], [
   'settings' => $image_settings,
+  'translatable' => FALSE,
 ]);
 pn_field('family_member', 'field_fm_notes', 'text_long', 'Notes', [], []);
 
@@ -141,6 +145,7 @@ pn_field('event', 'field_event_type', 'list_string', 'Event type', [
 ], ['translatable' => FALSE]);
 pn_field('event', 'field_event_image', 'image', 'Image', ['settings' => ['uri_scheme' => 'public']], [
   'settings' => $image_settings,
+  'translatable' => FALSE,
 ]);
 pn_field('event', 'field_event_rsvp', 'boolean', 'Collect RSVP', [], [
   'description' => 'Show Going / Maybe / Not going buttons to family members.',
@@ -153,6 +158,7 @@ pn_field('event', 'field_event_rsvp', 'boolean', 'Collect RSVP', [], [
 print "Album fields\n";
 pn_field('album', 'field_album_cover', 'image', 'Cover image', ['settings' => ['uri_scheme' => 'public']], [
   'settings' => $image_settings,
+  'translatable' => FALSE,
 ]);
 
 print "Gallery item fields\n";
@@ -162,6 +168,7 @@ pn_field('gallery_item', 'field_gi_type', 'list_string', 'Media type', [
 pn_field('gallery_item', 'field_gi_image', 'image', 'Photo', ['settings' => ['uri_scheme' => 'public']], [
   'settings' => $image_settings,
   'description' => 'For videos this is used as the poster frame.',
+  'translatable' => FALSE,
 ]);
 pn_field('gallery_item', 'field_gi_video', 'file', 'Video file', [
   'settings' => ['uri_scheme' => 'public', 'target_type' => 'file'],

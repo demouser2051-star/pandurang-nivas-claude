@@ -483,9 +483,14 @@ button.user-avatar {
 
 /* Family member page ------------------------------------------------------ */
 
+/*
+ * Sit against the container's left edge rather than centred. Centring a 900px
+ * card inside the 1200px container pushed it - and the avatar with it - 150px
+ * to the right of where the header, footer and every other page begin.
+ */
 .pn-member {
   max-width: 900px;
-  margin: 0 auto;
+  margin: 0 auto 0 0;
   padding: 34px 30px 40px;
   background: #fff;
   border-radius: var(--border-radius);
